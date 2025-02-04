@@ -43,7 +43,7 @@ export default function ValentineProposal() {
         className="absolute bottom-10 right-10 transform rotate-6"
       />
       <h1 className="text-4xl font-bold text-pink-600 mb-8 text-center flex items-center justify-center">
-        <NiceHeart className="mr-2 text-pink-600" size={40} /> Will you be my Valentine?{" "}
+        <NiceHeart className="mr-2 text-pink-600" size={40} /> will you be my Valentine?{" "}
         <NiceHeart className="ml-2 text-pink-600" size={40} />
       </h1>
       <div className="flex items-center space-x-4 relative">
