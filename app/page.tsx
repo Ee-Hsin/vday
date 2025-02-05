@@ -35,8 +35,8 @@ export default function Page() {
         <h2 className={`text-7xl font-bold mb-6 text-[#d98f8f] ${fredoka.className}`}>
           Personal Website Generator
         </h2>
-        <p className={`text-4xl max-w-4xl leading-relaxed text-[#aa9a7d] ${poppins.className}`}>
-          Your crush deserves more than a DM.<br/>
+        <p className={`text-4xl max-w-5xl leading-relaxed text-[#aa9a7d] ${poppins.className}`}>
+          Your potential valentine deserves more than a DM.<br/>
           Enter details, add pics, and get a link.<br/>
           Zero coding required.
         </p>
