@@ -114,7 +114,7 @@ export default function ValentineForm() {
             type="submit" 
             className="w-full bg-[#d98f8f] hover:bg-[#c47f7f]"
           >
-            Send Valentine
+            Generate Website
           </Button>
         </form>
       </Form>
