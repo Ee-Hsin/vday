@@ -9,6 +9,7 @@ import { useState } from "react";
 import { Fredoka, Poppins } from "next/font/google";
 import HeartBackground from "@/components/HeartBackground";
 import ClickHeartEffect from "@/components/ClickHeartEffect";
+import { useRouter } from 'next/navigation';
 
 const fredoka = Fredoka({ 
   subsets: ['latin'],
@@ -21,6 +22,7 @@ const poppins = Poppins({
 });
 
 export default function Page() {
+  const router = useRouter();
   const [isCreateHovered, setIsCreateHovered] = useState(false);
   const [isExampleHovered, setIsExampleHovered] = useState(false);
 
@@ -46,6 +48,7 @@ export default function Page() {
         className="absolute bottom-[120px] left-[100px] z-20 cursor-pointer group"        
         onMouseEnter={() => setIsCreateHovered(true)}
         onMouseLeave={() => setIsCreateHovered(false)}
+        onClick={() => router.push('/form')}
       >
         <button className={`bg-[#d98f8f] text-white font-bold text-4xl py-8 px-[60px] rounded-full relative z-10 transition-shadow duration-200 ease-in-out group-hover:shadow-[0_0_20px_rgba(217,143,143,0.8)] ${fredoka.className}`}>
           Create Website
