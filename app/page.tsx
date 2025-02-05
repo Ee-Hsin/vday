@@ -47,7 +47,7 @@ export default function Page() {
         onMouseEnter={() => setIsCreateHovered(true)}
         onMouseLeave={() => setIsCreateHovered(false)}
       >
-        <button className="bg-[#d98f8f] text-white font-bold text-3xl py-8 px-[80px] rounded-full relative z-10 transition-shadow duration-200 ease-in-out group-hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]">
+        <button className={`bg-[#d98f8f] text-white font-bold text-4xl py-8 px-[60px] rounded-full relative z-10 transition-shadow duration-200 ease-in-out group-hover:shadow-[0_0_20px_rgba(217,143,143,0.8)] ${fredoka.className}`}>
           Create Website
         </button>
 
@@ -67,7 +67,7 @@ export default function Page() {
         onMouseLeave={() => setIsExampleHovered(false)}
         onClick={() => window.open('/example', '_blank')}
       >
-        <button className="bg-[#d98f8f] text-white font-bold text-3xl py-8 px-[80px] rounded-full relative z-10 transition-shadow duration-200 ease-in-out group-hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]">
+        <button className={`bg-[#d98f8f] text-white font-bold text-4xl py-8 px-[60px] rounded-full relative z-10 transition-shadow duration-200 ease-in-out group-hover:shadow-[0_0_20px_rgba(217,143,143,0.8)] ${fredoka.className}`}>
           See Example
         </button>
 
