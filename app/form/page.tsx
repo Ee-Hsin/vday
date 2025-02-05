@@ -14,16 +14,19 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
+import { useState } from "react"
 
 const formSchema = z.object({
   senderName: z.string().min(1, "Your name is required"),
   recipientName: z.string().min(1, "Valentine's name is required"),
   message: z.string().min(1, "Message is required"),
-  images: z
-    .custom<FileList>()
-    .transform((files) => files ? Array.from(files) : [])
-    .refine((files) => files.length <= 2, "Maximum 2 images allowed")
-    .optional(),
+  image1: z.custom<File>().optional(),
+  caption1: z.string().optional(),
+  image2: z.custom<File>().optional(),
+  caption2: z.string().optional(),
+}).refine((data) => data.image1 || data.image2, {
+  message: "At least one image is required",
+  path: ["image1"],
 })
 
 export default function ValentineForm() {
@@ -33,12 +36,17 @@ export default function ValentineForm() {
       senderName: "",
       recipientName: "",
       message: "",
+      caption1: "",
+      caption2: "",
     },
   })
 
+  const [preview1, setPreview1] = useState<string | null>(null)
+  const [preview2, setPreview2] = useState<string | null>(null)
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
-    // Handle form submission here
+    // Handle form submission
   }
 
   return (
@@ -73,19 +81,78 @@ export default function ValentineForm() {
             )}
           />
 
+          {/* Image 1 Upload */}
           <FormField
             control={form.control}
-            name="images"
+            name="image1"
             render={({ field: { onChange, ...field } }) => (
               <FormItem>
-                <FormLabel>Upload Images (max 2)</FormLabel>
+                <FormLabel>Upload Image 1 (Optional)</FormLabel>
                 <FormControl>
                   <Input
                     type="file"
                     accept="image/*"
-                    multiple
-                    onChange={(e) => onChange(e.target.files)}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null
+                      onChange(file)
+                      setPreview1(file ? URL.createObjectURL(file) : null)
+                    }}
                   />
+                </FormControl>
+                {preview1 && (
+                  <img src={preview1} alt="Preview 1" className="mt-2 w-40 h-40 object-cover rounded-lg" />
+                )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="caption1"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Caption for Image 1 (Optional)</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter caption for Image 1" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Image 2 Upload */}
+          <FormField
+            control={form.control}
+            name="image2"
+            render={({ field: { onChange, ...field } }) => (
+              <FormItem>
+                <FormLabel>Upload Image 2 (Optional)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null
+                      onChange(file)
+                      setPreview2(file ? URL.createObjectURL(file) : null)
+                    }}
+                  />
+                </FormControl>
+                {preview2 && (
+                  <img src={preview2} alt="Preview 2" className="mt-2 w-40 h-40 object-cover rounded-lg" />
+                )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="caption2"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Caption for Image 2 (Optional)</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter caption for Image 2" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
