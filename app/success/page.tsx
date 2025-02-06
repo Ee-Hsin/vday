@@ -1,18 +1,34 @@
-"use client"
+"use client";
 
-import { useSearchParams } from "next/navigation"
-import Link from "next/link"
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Suspense } from "react"; // Import Suspense
 
 function SuccessPage() {
-  const searchParams = useSearchParams()
-  const id = searchParams.get("id") // Get the 'id' query parameter (always a string)
-
   return (
     <div>
       <h1>Success!</h1>
-      <Link href={`/card/${id}`}>{id}</Link>
+      <Suspense fallback={<p>Loading...</p>}> {/* Wrap with Suspense */}
+        <SearchParamsContent />
+      </Suspense>
     </div>
-  )
+  );
 }
 
-export default SuccessPage
+function SearchParamsContent() { // Separate component for using useSearchParams
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+
+  return (
+    <>
+      {id && (
+        <Link href={`/card/${id}`} prefetch>
+          {id}
+        </Link>
+      )}
+        {!id && (<p>No id provided</p>)}
+    </>
+  );
+}
+
+export default SuccessPage;
