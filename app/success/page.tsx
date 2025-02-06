@@ -1,6 +1,7 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
+import Link from "next/link"
 
 function SuccessPage() {
   const searchParams = useSearchParams()
@@ -9,7 +10,7 @@ function SuccessPage() {
   return (
     <div>
       <h1>Success!</h1>
-      <p>{id}</p>
+      <Link href={`/card/${id}`}>{id}</Link>
     </div>
   )
 }
