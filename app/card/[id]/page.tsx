@@ -8,7 +8,7 @@ import { doc, getDoc } from 'firebase/firestore'; // Import getFirestore
 
 export default function CardPage() {
   const params = useParams();
-  const id = params.id; // Get the ID from the URL
+  const id = Array.isArray(params.id) ? params.id[0] : params.id; // Ensure id is a string
   const [cardData, setCardData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -3,8 +3,6 @@
 import Link from "next/link"
 import bg from "../assets/mofu pc transparent bigger.png"
 import bgMobile from "../assets/vday landing phone.png"
-import happy from "../assets/mofu vday happy.png"
-import sad from "../assets/mofu vday sad.png"
 import Image from "next/image"
 import { useState } from "react"
 import { Fredoka, Poppins } from "next/font/google"
