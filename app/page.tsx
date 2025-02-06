@@ -22,8 +22,6 @@ const poppins = Poppins({
 })
 
 export default function Page() {
-  const [isCreateHovered, setIsCreateHovered] = useState(false)
-  const [isExampleHovered, setIsExampleHovered] = useState(false)
 
   const isClient = typeof window !== "undefined"
 
@@ -55,64 +53,30 @@ export default function Page() {
         </p>
       </div>
 
-      <div className="mt-[7vh] md:static w-full px-[5vw] flex justify-center gap-[4vw] md:block">
+      <div className="relative z-10 mt-[5vh] md:mt-[7.5vh] px-[5vw] flex gap-[4vw]">
         <Link href="/form">
-        <div
-          className="md:absolute md:bottom-[120px] md:left-[100px] z-20 cursor-pointer group"
-          onMouseEnter={() => setIsCreateHovered(true)}
-          onMouseLeave={() => setIsCreateHovered(false)}
-        >
           <button
-            className={`bg-[#d98f8f] text-white font-bold text-[5vw] whitespace-nowrap md:text-4xl py-[2vh] md:py-8 px-[4vw] md:px-[60px] rounded-full relative z-10 transition-shadow duration-200 ease-in-out group-hover:shadow-[0_0_20px_rgba(217,143,143,0.8)] ${fredoka.className}`}
+            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap 
+            z-30 relative cursor-pointer
+            transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
+            ${fredoka.className}`}
           >
             Create Website
           </button>
-
-          <div className="w-[30vw] h-[15vh] -mt-[16vh] md:w-[288px] md:h-[260px] md:-mt-[275px] relative z-20 left-1/2 -translate-x-1/2">
-            <Image
-              src={
-                isClient && window.innerWidth >= 768
-                  ? isCreateHovered
-                    ? happy
-                    : sad
-                  : happy
-              }
-              alt="Mood"
-              className="w-full h-full object-contain"
-              priority
-            />
-          </div>
-        </div>
         </Link>
 
         <Link href="/example" target="_blank" rel="noopener noreferrer">
-          <div
-            className="md:absolute md:bottom-[120px] md:left-[550px] z-20 cursor-pointer group"
-            onMouseEnter={() => setIsExampleHovered(true)}
-            onMouseLeave={() => setIsExampleHovered(false)}
+          <button
+            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap
+            z-30 relative cursor-pointer
+            transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
+            ${fredoka.className}`}
           >
-            <button
-              className={`bg-[#d98f8f] text-white font-bold text-[5vw] whitespace-nowrap md:text-4xl py-[2vh] md:py-8 px-[4vw] md:px-[60px] rounded-full relative z-10 transition-shadow duration-200 ease-in-out group-hover:shadow-[0_0_20px_rgba(217,143,143,0.8)] ${fredoka.className}`}
-            >
-              See Example
-            </button>
-            <div className="w-[30vw] h-[15vh] -mt-[16vh] md:w-[288px] md:h-[260px] md:-mt-[275px] relative z-20 left-1/2 -translate-x-1/2">
-              <Image
-                src={
-                  isClient && window.innerWidth >= 768
-                    ? isExampleHovered
-                      ? happy
-                      : sad
-                    : happy
-                }
-                alt="Mood"
-                className="w-full h-full object-contain"
-                priority
-              />
-            </div>
-          </div>
+            See Example
+          </button>
         </Link>
       </div>
+
       <Image
         src={bg}
         alt="Background"
