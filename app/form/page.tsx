@@ -3,13 +3,13 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { 
+import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage 
+  FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -17,17 +17,43 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { db, storage } from "@/lib/firebase"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
-import { collection, addDoc } from "firebase/firestore"
+import { collection, addDoc, updateDoc } from "firebase/firestore"
+import { useRouter } from "next/navigation"
 
-const formSchema = z.object({
-  senderName: z.string().min(1, "Your name is required"),
-  recipientName: z.string().min(1, "Valentine's name is required"),
-  message: z.string().min(1, "Message is required"),
-  image1: z.custom<File>().optional(),
-  caption1: z.string().optional(),
-  image2: z.custom<File>().optional(),
-  caption2: z.string().optional(),
-})
+const formSchema = z
+  .object({
+    senderName: z.string().min(1, "Your name is required"),
+    recipientName: z.string().min(1, "Valentine's name is required"),
+    message: z.string().min(1, "Message is required"),
+    image1: z.custom<File>().optional(),
+    caption1: z.string().optional(),
+    image2: z.custom<File>().optional(),
+    caption2: z.string().optional(),
+  })
+  .refine(
+    (data) => (data.image1 ? (data.caption1 ?? "").trim().length > 0 : true),
+    {
+      message: "You forgot to write a caption for your first image!",
+      path: ["caption1"],
+    }
+  )
+  .refine((data) => (data.caption1 ? !!data.image1 : true), {
+    message:
+      "You wrote a caption for your first image but forgot to upload the image!",
+    path: ["image1"],
+  })
+  .refine(
+    (data) => (data.image2 ? (data.caption2 ?? "").trim().length > 0 : true),
+    {
+      message: "You forgot to write a caption for your second image!",
+      path: ["caption2"],
+    }
+  )
+  .refine((data) => (data.caption2 ? !!data.image2 : true), {
+    message:
+      "You wrote a caption for your second image but forgot to upload the image!",
+    path: ["image2"],
+  })
 
 export default function ValentineForm() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,43 +71,63 @@ export default function ValentineForm() {
   const [preview2, setPreview2] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
+  const router = useRouter()
+
   async function uploadImage(file: File | undefined, path: string) {
-    if (!file) return null;
-    const storageRef = ref(storage, `valentines/${path}`);
-    const snapshot = await uploadBytes(storageRef, file);
-    return await getDownloadURL(snapshot.ref);
+    if (!file) return null
+    const storageRef = ref(storage, path)
+    const snapshot = await uploadBytes(storageRef, file)
+    return await getDownloadURL(snapshot.ref)
   }
 
+  // after submitting, I need to go to a success page with the link to the generated website
+  // i will need to pass the docId to the success page as the generated will be /[docId]
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setLoading(true);
-    
+    setLoading(true)
+
     console.log(values)
     try {
-      // Upload images if present
-      // const image1URL = await uploadImage(values.image1, `image1-${Date.now()}`);
-      // const image2URL = await uploadImage(values.image2, `image2-${Date.now()}`);
-
-      // Store data in Firestore
-      await addDoc(collection(db, "valentineMessages"), {
+      const docRef = await addDoc(collection(db, "valentineMessages"), {
         senderName: values.senderName,
         recipientName: values.recipientName,
         message: values.message,
-        // image1URL,
-        caption1: values.caption1,
-        // image2URL,
-        caption2: values.caption2,
+        caption1: values.caption1 || null,
+        caption2: values.caption2 || null,
         timestamp: new Date(),
-      });
+      })
 
-      alert("Message saved successfully!");
-      form.reset();
-      setPreview1(null);
-      setPreview2(null);
+      let image1URL = null
+      let image2URL = null
+
+      if (values.image1 && values.caption1) {
+        image1URL = await uploadImage(
+          values.image1,
+          `valentines/${docRef.id}/image1-${Date.now()}`
+        )
+      }
+
+      if (values.image2 && values.caption2) {
+        image2URL = await uploadImage(
+          values.image2,
+          `valentines/${docRef.id}/image2-${Date.now()}`
+        )
+      }
+
+      await updateDoc(docRef, {
+        image1URL,
+        image2URL,
+      })
+
+      form.reset()
+      setPreview1(null)
+      setPreview2(null)
+
+      router.push(`/success?id=${docRef.id}`)
     } catch (error) {
-      console.error("Error saving message:", error);
-      alert("Error saving message. Please try again.");
+      console.error("Error saving message:", error)
+      alert("Error saving message. Please try again.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -123,20 +169,24 @@ export default function ValentineForm() {
             name="image1"
             render={({ field: { onChange, ...field } }) => (
               <FormItem>
-                <FormLabel>Upload Image 1 (Optional)</FormLabel>
+                <FormLabel>Upload Your First Image! (Optional)</FormLabel>
                 <FormControl>
                   <Input
                     type="file"
                     accept="image/*"
                     onChange={(e) => {
-                      const file = e.target.files?.[0] || null;
-                      onChange(file);
-                      setPreview1(file ? URL.createObjectURL(file) : null);
+                      const file = e.target.files?.[0] || null
+                      onChange(file)
+                      setPreview1(file ? URL.createObjectURL(file) : null)
                     }}
                   />
                 </FormControl>
                 {preview1 && (
-                  <img src={preview1} alt="Preview 1" className="mt-2 w-40 h-40 object-cover rounded-lg" />
+                  <img
+                    src={preview1}
+                    alt="Preview 1"
+                    className="mt-2 w-40 h-40 object-cover rounded-lg"
+                  />
                 )}
                 <FormMessage />
               </FormItem>
@@ -147,9 +197,9 @@ export default function ValentineForm() {
             name="caption1"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Caption for Image 1 (Optional)</FormLabel>
+                <FormLabel>Caption your First image! (Optional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter caption for Image 1" {...field} />
+                  <Input placeholder="Enter a sweet caption!" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -162,20 +212,24 @@ export default function ValentineForm() {
             name="image2"
             render={({ field: { onChange, ...field } }) => (
               <FormItem>
-                <FormLabel>Upload Image 2 (Optional)</FormLabel>
+                <FormLabel>Upload Your Second Image! (Optional)</FormLabel>
                 <FormControl>
                   <Input
                     type="file"
                     accept="image/*"
                     onChange={(e) => {
-                      const file = e.target.files?.[0] || null;
-                      onChange(file);
-                      setPreview2(file ? URL.createObjectURL(file) : null);
+                      const file = e.target.files?.[0] || null
+                      onChange(file)
+                      setPreview2(file ? URL.createObjectURL(file) : null)
                     }}
                   />
                 </FormControl>
                 {preview2 && (
-                  <img src={preview2} alt="Preview 2" className="mt-2 w-40 h-40 object-cover rounded-lg" />
+                  <img
+                    src={preview2}
+                    alt="Preview 2"
+                    className="mt-2 w-40 h-40 object-cover rounded-lg"
+                  />
                 )}
                 <FormMessage />
               </FormItem>
@@ -186,9 +240,9 @@ export default function ValentineForm() {
             name="caption2"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Caption for Image 2 (Optional)</FormLabel>
+                <FormLabel>Caption your First image! (Optional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter caption for Image 2" {...field} />
+                  <Input placeholder="Drop a cute caption!" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -202,7 +256,7 @@ export default function ValentineForm() {
               <FormItem>
                 <FormLabel>Your Message</FormLabel>
                 <FormControl>
-                  <Textarea 
+                  <Textarea
                     placeholder="Write your valentine message here..."
                     className="min-h-[120px] resize-none"
                     {...field}
@@ -213,9 +267,9 @@ export default function ValentineForm() {
             )}
           />
 
-          <Button 
-            type="submit" 
-            className="w-full bg-[#d98f8f] hover:bg-[#c47f7f]" 
+          <Button
+            type="submit"
+            className="w-full bg-[#d98f8f] hover:bg-[#c47f7f]"
             disabled={loading}
           >
             {loading ? "Submitting..." : "Generate Website"}
