@@ -25,6 +25,9 @@ const poppins = Poppins({
 })
 
 function SuccessPage() {
+  const searchParams = useSearchParams()
+  const id = searchParams.get("id")
+
   return (
     <div className="h-screen relative bg-[#ffeded] overflow-hidden">
       <Toaster position="bottom-center" />
@@ -40,11 +43,18 @@ function SuccessPage() {
       {/* Content */}
       <div className="relative z-10 mt-[5vh] md:mt-[80px] md:ml-[5vw] text-center md:text-center md:w-[45vw]">
         <h1 className={`text-[14vw] leading-[1] md:text-9xl py-1 font-bold text-[#d98f8f] mb-[4vh] md:mb-[4vh] ${fredoka.className}`}>
-          Your <br className="block md:hidden" />Website<br />
-          is Live!
+          {id ? (
+            <>Your <br className="block md:hidden" />Website<br />is Live!</>
+          ) : (
+            <>Something<br />Went Wrong</>
+          )}
         </h1>
-        <p className={`text-[5vw] md:text-4xl max-w-5xl leading-relaxed text-[#aa9a7d] mb-[4vh] md:mb-[4vh] ${poppins.className}`}>
-          Share this link with your potential valentine. We hope they say yes!
+        <p className={`text-[5vw] md:text-4xl max-w-5xl leading-relaxed text-[#aa9a7d] px-[5vw] mb-[4vh] md:mb-[4vh] ${poppins.className}`}>
+        {id ? (
+            "Share this link with your potential valentine. We hope they say yes!"
+          ) : (
+            "Please try submitting the form again. Make sure there is an 'id value' in this page's url."
+          )}
         </p>
         <Suspense fallback={<p className={poppins.className}>Loading...</p>}>
           <SearchParamsContent />
@@ -141,7 +151,18 @@ function SearchParamsContent() {
 
 
       )}
-      {!id && <p className="text-[5vw] md:text-4xl text-[#d98f8f]">No id provided</p>}
+      {!id && (
+        <Link href="/form">
+          <button
+            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[6vw] md:px-[60px] rounded-full whitespace-nowrap 
+            z-30 relative cursor-pointer
+            transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
+            ${fredoka.className}`}
+          >
+            Back to Form
+          </button>
+        </Link>
+      )}
     </div>
   )
 }
