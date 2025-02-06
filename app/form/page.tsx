@@ -15,6 +15,9 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
+import { db, storage } from "@/lib/firebase"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import { collection, addDoc } from "firebase/firestore"
 
 const formSchema = z.object({
   senderName: z.string().min(1, "Your name is required"),
@@ -24,9 +27,6 @@ const formSchema = z.object({
   caption1: z.string().optional(),
   image2: z.custom<File>().optional(),
   caption2: z.string().optional(),
-}).refine((data) => data.image1 || data.image2, {
-  message: "At least one image is required",
-  path: ["image1"],
 })
 
 export default function ValentineForm() {
@@ -43,10 +43,46 @@ export default function ValentineForm() {
 
   const [preview1, setPreview1] = useState<string | null>(null)
   const [preview2, setPreview2] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function uploadImage(file: File | undefined, path: string) {
+    if (!file) return null;
+    const storageRef = ref(storage, `valentines/${path}`);
+    const snapshot = await uploadBytes(storageRef, file);
+    return await getDownloadURL(snapshot.ref);
+  }
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    
     console.log(values)
-    // Handle form submission
+    try {
+      // Upload images if present
+      // const image1URL = await uploadImage(values.image1, `image1-${Date.now()}`);
+      // const image2URL = await uploadImage(values.image2, `image2-${Date.now()}`);
+
+      // Store data in Firestore
+      await addDoc(collection(db, "valentineMessages"), {
+        senderName: values.senderName,
+        recipientName: values.recipientName,
+        message: values.message,
+        // image1URL,
+        caption1: values.caption1,
+        // image2URL,
+        caption2: values.caption2,
+        timestamp: new Date(),
+      });
+
+      alert("Message saved successfully!");
+      form.reset();
+      setPreview1(null);
+      setPreview2(null);
+    } catch (error) {
+      console.error("Error saving message:", error);
+      alert("Error saving message. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -93,9 +129,9 @@ export default function ValentineForm() {
                     type="file"
                     accept="image/*"
                     onChange={(e) => {
-                      const file = e.target.files?.[0] || null
-                      onChange(file)
-                      setPreview1(file ? URL.createObjectURL(file) : null)
+                      const file = e.target.files?.[0] || null;
+                      onChange(file);
+                      setPreview1(file ? URL.createObjectURL(file) : null);
                     }}
                   />
                 </FormControl>
@@ -132,9 +168,9 @@ export default function ValentineForm() {
                     type="file"
                     accept="image/*"
                     onChange={(e) => {
-                      const file = e.target.files?.[0] || null
-                      onChange(file)
-                      setPreview2(file ? URL.createObjectURL(file) : null)
+                      const file = e.target.files?.[0] || null;
+                      onChange(file);
+                      setPreview2(file ? URL.createObjectURL(file) : null);
                     }}
                   />
                 </FormControl>
@@ -179,9 +215,10 @@ export default function ValentineForm() {
 
           <Button 
             type="submit" 
-            className="w-full bg-[#d98f8f] hover:bg-[#c47f7f]"
+            className="w-full bg-[#d98f8f] hover:bg-[#c47f7f]" 
+            disabled={loading}
           >
-            Generate Website
+            {loading ? "Submitting..." : "Generate Website"}
           </Button>
         </form>
       </Form>
