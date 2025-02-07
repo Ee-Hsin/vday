@@ -25,9 +25,6 @@ const poppins = Poppins({
 })
 
 function SuccessPage() {
-  const searchParams = useSearchParams()
-  const id = searchParams.get("id")
-
   return (
     <div className="h-screen relative bg-[#ffeded] overflow-hidden">
       <Toaster position="bottom-center" />
