@@ -269,16 +269,24 @@ export default function ValentineForm() {
                                   w-24 h-24 rounded-lg p-1 transition-all relative
                                   ${
                                     selectedStamp === stamp.id
-                                      ? "bg-white ring-2 ring-[#b35151]"
-                                      : "bg-[#F8E3E3] hover:bg-white"
+                                      ? "bg-white"
+                                      : "bg-[#F8E3E3] hover:drop-shadow-lg"
                                   }
                                 `}
                               >
                                 <Image
                                   src={stampFrame}
                                   alt="Stamp Frame"
-                                  className="w-full h-full object-contain absolute top-0 left-0 scale-110"
+                                  className={`
+                                      w-full h-full object-contain absolute top-0 left-0 scale-110
+                                      ${
+                                        selectedStamp === stamp.id
+                                          ? "brightness-[90%] saturate-[60%] contrast-[120%] invert-[15%] hue-rotate-[50deg]"
+                                          : ""
+                                      }
+                                    `}
                                 />
+
                                 <Image
                                   src={stamp.src}
                                   alt={stamp.alt}
