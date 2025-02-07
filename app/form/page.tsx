@@ -19,6 +19,7 @@ import { db, storage } from "@/lib/firebase"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { collection, addDoc, updateDoc } from "firebase/firestore"
 import { useRouter } from "next/navigation"
+import imageCompression from "browser-image-compression";
 
 const formSchema = z
   .object({
@@ -80,8 +81,6 @@ export default function ValentineForm() {
     return await getDownloadURL(snapshot.ref)
   }
 
-  // after submitting, I need to go to a success page with the link to the generated website
-  // i will need to pass the docId to the success page as the generated will be /[docId]
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true)
 
@@ -99,16 +98,26 @@ export default function ValentineForm() {
       let image1URL = null
       let image2URL = null
 
+      const compressionOptions = {
+        maxSizeMB: 0.5, // Target max size
+        maxWidthOrHeight: 800, // Max width/height
+        useWebWorker: true, // Improve performance
+      };
+
       if (values.image1 && values.caption1) {
+        const compressedImage = await imageCompression(values.image1, compressionOptions)
+
         image1URL = await uploadImage(
-          values.image1,
+          compressedImage,
           `valentines/${docRef.id}/image1-${Date.now()}`
         )
       }
 
       if (values.image2 && values.caption2) {
+        const compressedImage = await imageCompression(values.image2, compressionOptions)
+
         image2URL = await uploadImage(
-          values.image2,
+          compressedImage,
           `valentines/${docRef.id}/image2-${Date.now()}`
         )
       }
