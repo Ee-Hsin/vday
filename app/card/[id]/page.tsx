@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase'; // Your Firebase initialization
 import { doc, getDoc } from 'firebase/firestore'; // Import getFirestore
+import ValentineProposal from "@/components/CardTemplate";
 
 export default function CardPage() {
   const params = useParams();
@@ -52,14 +53,22 @@ export default function CardPage() {
 
   // Now you have the card data, display it!
   return (
-    <div>
-      <h1>Your Valentine Card</h1>
-      <p>Sender: {cardData.senderName}</p>
-      <p>Recipient: {cardData.recipientName}</p>
-      <p>Message: {cardData.message}</p>
-      {/* ... other card details ... */}
-      {cardData.image1URL && <img src={cardData.image1URL} alt="Image 1" />}
-      {cardData.image2URL && <img src={cardData.image2URL} alt="Image 2" />}
-    </div>
+    <ValentineProposal
+      imgUrl={cardData.image1URL || "/fallback-image.jpg"}
+      imgCaption={cardData.caption1 || ""}
+      imgUrl2={cardData.image2URL || "/fallback-image.jpg"}
+      imgCaption2={cardData.caption2 || ""}
+      valentineName={cardData.recipientName}
+      message={cardData.message}
+    />
+    // <div>
+    //   <h1>Your Valentine Card</h1>
+    //   <p>Sender: {cardData.senderName}</p>
+    //   <p>Recipient: {cardData.recipientName}</p>
+    //   <p>Message: {cardData.message}</p>
+    //   {/* ... other card details ... */}
+    //   {cardData.image1URL && <img src={cardData.image1URL} alt="Image 1" />}
+    //   {cardData.image2URL && <img src={cardData.image2URL} alt="Image 2" />}
+    // </div>
   );
 }

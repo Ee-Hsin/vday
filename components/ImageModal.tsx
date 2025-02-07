@@ -12,7 +12,7 @@ interface ImageModalProps {
 export default function ImageModal({ isOpen, onClose, src, alt, caption }: ImageModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-pink-100 border-2 border-pink-500 max-w-3xl">
+      <DialogContent className="bg-pink-50 border-2 border-[#d98f8f] max-w-3xl">
         <div className="relative aspect-square w-full">
           <Image src={src || "/placeholder.svg"} alt={alt} layout="fill" objectFit="cover" className="rounded-lg" />
         </div>
