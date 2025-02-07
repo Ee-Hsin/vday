@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { useMovingButton } from "../hooks/useMovingButton"
@@ -32,7 +32,10 @@ interface ValentineProposalProps {
 export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCaption2, valentineName, message} : ValentineProposalProps) {
     const [showModal, setShowModal] = useState(false)
     const [noClicked, setNoClicked] = useState(false)
+    const containerRef = useRef<HTMLDivElement>(null);
     const { buttonPosition, handleMouseMove } = useMovingButton()
+    // const { buttonPosition, handleMouseMove } = useMovingButton(containerRef);
+
   
     useEffect(() => {
       if (noClicked) {
@@ -42,6 +45,8 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
         return () => clearTimeout(timer)
       }
     }, [noClicked])
+
+    
   
     return (
       <div
@@ -51,9 +56,12 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
         <ClickHeartEffect />
         <HeartBackground />
 
-        <div className="w-[90vw] md:max-w-[750px] aspect-[1.414/1] bg-[#ffffff] rounded-lg shadow-lg p-8 flex flex-col items-center z-10 justify-between">
+        <div
+          ref={containerRef} 
+          className="w-[90vw] md:max-w-[750px] md:h-auto aspect-[1.414/1] max-h-[500px] md:max-h-none bg-[#ffffff] rounded-lg shadow-lg p-8 flex flex-col items-center z-10 justify-between"
+        >
 
-          <h1 className="text-4xl font-bold text-pink-600 mb-8 text-center flex items-center justify-center">
+          <h1 className={`${fredoka.className} text-4xl font-bold text-[#d98f8f] text-center flex items-center justify-center`}>
             Hi {valentineName}, will you be my Valentine?
           </h1>
           
@@ -72,12 +80,16 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
             />
           </div>
           
-          <div className="flex items-center space-x-4 relative">
-            <Button className="bg-pink-500 hover:bg-pink-600 text-white" onClick={() => setShowModal(true)}>
-              Yes
+          
+          <div className="flex items-center space-x-5 relative">
+            <Button 
+              className={`${fredoka.className} bg-[#d98f8f] hover:bg-[#a55c5c] text-white w-[70px] font-medium rounded-xl text-lg -ml-[95px]`}
+              onClick={() => setShowModal(true)}
+            >              
+            Yes
             </Button>
             <motion.div
-              className="relative"
+              className="relative z-20"
               style={{
                 position: "absolute",
                 left: `calc(100% + ${buttonPosition.x}px)`,
@@ -86,7 +98,10 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
               animate={{ x: buttonPosition.x, y: buttonPosition.y }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              <Button className="bg-gray-300 text-gray-700 relative overflow-visible" onClick={() => setNoClicked(true)}>
+              <Button
+                className={`${fredoka.className} bg-gray-300 hover:bg-gray-400 text-gray-700 w-[70px] font-medium rounded-xl text-lg relative overflow-visible`}
+                onClick={() => setNoClicked(true)}
+              >
                 <AnimatePresence mode="wait">
                   {noClicked ? (
                     <motion.div
