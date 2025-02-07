@@ -101,9 +101,9 @@ function SearchParamsContent() {
   }
 
   return (
-    <div className="relative z-10 mt-[5vh] md:mt-[80px] md:ml-[5vw] text-center md:text-center md:w-[45vw]">
+    <div className="relative z-10 mt-[5vh] md:mt-[80px] md:ml-[5vw] text-center md:text-center md:w-[46vw]">
       <h1
-        className={`text-[14vw] leading-[1] md:text-9xl py-1 font-bold text-[#d98f8f] mb-[4vh] md:mb-[4vh] ${fredoka.className}`}
+        className={`text-[14vw] leading-[1] md:text-8xl py-1 font-bold text-[#d98f8f] mb-[4vh] md:mb-[4vh] ${fredoka.className}`}
       >
         {id ? (
           <>
@@ -127,64 +127,72 @@ function SearchParamsContent() {
           ? "Share this link with your potential valentine. We hope they say yes!"
           : "Please try submitting the form again. Make sure there is an 'id value' in this page's url."}
       </p>
-      <div className={poppins.className}>
-        {/* Add an input here containing the link already written out and an icon to hit copy link */}
-        <div className="flex justify-center items-center w-full max-w-lg bg-[#d98f8f] rounded-xl px-4 py-2 my-3">
-          <input
-            type="text"
-            value={cardUrl}
-            readOnly
-            className="w-full bg-transparent text-white focus:outline-none"
-          />
-          <button
-            onClick={copyToClipboard}
-            className="ml-2 p-2 text-gray-300 hover:text-gray-500 transition-colors"
-          >
-            <IoCopy size={20} />
-          </button>
-        </div>
-        {id && (
-          <div className="flex gap-[4vw] justify-center">
+
+      {/* URL input container - hidden on mobile */}
+      {id && (
+        <div className="w-full flex justify-center">
+          <div className="flex justify-center items-center w-fit bg-[#d98f8f] rounded-3xl px-6 py-3 my-3">
             <Link
-              href={`/card/${id}`}
-              prefetch
+              href={cardUrl}
               target="_blank"
               rel="noopener noreferrer"
+              className="w-full text-lg text-white hover:text-[#ffcaca] hover:underline cursor-pointer"
             >
-              <button
-                className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[6vw] md:px-[60px] rounded-full whitespace-nowrap 
-            z-30 relative cursor-pointer
-            transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
-            ${fredoka.className}`}
-              >
-                Visit Site
-              </button>
+              <span className="hidden md:inline">{cardUrl}</span>
+              <span className="md:hidden">{cardUrl.slice(0, 26)}...</span>
             </Link>
-
             <button
               onClick={copyToClipboard}
+              className="ml-2 p-2 text-white hover:text-[#ffcaca] transition-colors flex-shrink-0"
+            >
+              <IoCopy size={20} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* {id && (
+        <div className="flex gap-[4vw] justify-center md:hidden">
+          <Link
+            href={`/card/${id}`}
+            prefetch
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <button
               className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[6vw] md:px-[60px] rounded-full whitespace-nowrap 
-          z-30 relative cursor-pointer flex items-center justify-center md:gap-4 gap-[2vw]
+          z-30 relative cursor-pointer
           transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
           ${fredoka.className}`}
             >
-              Copy Link
-            </button>
-          </div>
-        )}
-        {!id && (
-          <Link href="/form">
-            <button
-              className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[6vw] md:px-[60px] rounded-full whitespace-nowrap 
-            z-30 relative cursor-pointer
-            transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
-            ${fredoka.className}`}
-            >
-              Back to Form
+              Visit Site
             </button>
           </Link>
-        )}
-      </div>
+
+          <button
+            onClick={copyToClipboard}
+            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[6vw] md:px-[60px] rounded-full whitespace-nowrap 
+        z-30 relative cursor-pointer flex items-center justify-center md:gap-4 gap-[2vw]
+        transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
+        ${fredoka.className}`}
+          >
+            Copy Link
+          </button>
+        </div>
+      )} */}
+
+      {!id && (
+        <Link href="/form">
+          <button
+            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[6vw] md:px-[60px] rounded-full whitespace-nowrap 
+          z-30 relative cursor-pointer
+          transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
+          ${fredoka.className}`}
+          >
+            Back to Form
+          </button>
+        </Link>
+      )}
     </div>
   )
 }
