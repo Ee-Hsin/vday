@@ -40,7 +40,13 @@ export default function FramedImage({ src, alt, caption, className = "" }: Frame
             />
           </div>
           {/* Caption with automatic height */}
-          <p className={`text-center text-sm mt-2 text-pink-800 break-word ${poppins.className}`}>{caption}</p>
+          <p className={`
+            text-center text-sm mt-2 text-pink-800
+            ${poppins.className}
+            line-clamp-3
+          `}>
+            {caption}
+          </p>
         </div>
       </div>
       <ImageModal
