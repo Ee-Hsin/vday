@@ -179,18 +179,22 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
           </h1>
           
           <div className="relative w-full h-[600px] flex items-center justify-center">
+          {imgCaption && (
             <FramedImage
               src={imgUrl}
               alt="Memory 1"
               caption={imgCaption}
               className="absolute transform -rotate-6 z-10"
             />
+          )}
+          {imgCaption2 && (
             <FramedImage
               src={imgUrl2}
               alt="Memory 2"
               caption={imgCaption2}
               className="absolute transform rotate-6"
             />
+          )}
           </div>
           
           
