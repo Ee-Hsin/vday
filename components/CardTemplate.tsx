@@ -9,6 +9,9 @@ import BrokenHeart from "../components/BrokenHeart"
 import NiceHeart from "../components/NiceHeart"
 import ClickHeartEffect from "@/components/ClickHeartEffect"
 import { Fredoka, Poppins } from "next/font/google"
+import { useIsMobile } from "@/hooks/use-mobile" // Add this import
+import { YesButton } from "../components/YesButton"
+
 
 const fredoka = Fredoka({
   subsets: ["latin"],
@@ -53,10 +56,46 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
     const containerRef = useRef<HTMLDivElement>(null);
     const { buttonPosition, handleMouseMove } = useMovingButton()
     const [messageIndex, setMessageIndex] = useState(0);
+    const [extraYesButtons, setExtraYesButtons] = useState<{x: number, y: number}[]>([]);
+    const isMobile = useIsMobile(); // Add this hook
+
+    const handleYesClick = () => {
+      setShowModal(true);
+      setExtraYesButtons([]); // Clear extra buttons
+      setMessageIndex(0); // Reset counter
+    };
 
     const handleNoClick = () => {
       setNoClicked(true);
       setMessageIndex((prev) => (prev + 1) % noMessages.length);
+    
+      if (containerRef.current) {
+        const container = containerRef.current;
+        const rect = container.getBoundingClientRect();
+        
+        const BUTTON_WIDTH = isMobile ? 50 : 70;
+        const BUTTON_HEIGHT = 40; // Approximate button height
+        
+        // Calculate center point
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        // Calculate max offset (half of container dimensions)
+        const maxOffsetX = rect.width / 2 - BUTTON_WIDTH;
+        const maxOffsetY = rect.height / 2 - BUTTON_HEIGHT;
+        
+        const newButtons = Array(messageIndex + 1).fill(0).map(() => {
+          const offsetX = (Math.random() - 0.5) * 2 * maxOffsetX;
+          const offsetY = (Math.random() - 0.5) * 2 * maxOffsetY;
+          
+          return { 
+            x: centerX + offsetX - BUTTON_WIDTH/2,  // Offset by half button width
+            y: centerY + offsetY - BUTTON_HEIGHT/2  // Offset by half button height
+          };
+        });
+        
+        setExtraYesButtons(prev => [...prev, ...newButtons]);
+      }
     };
   
     useEffect(() => {
@@ -104,8 +143,8 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
           
           <div className="flex items-center space-x-5 relative">
             <Button 
-              className={`${fredoka.className} bg-[#d98f8f] hover:bg-[#a55c5c] text-white w-[70px] font-medium rounded-xl text-lg -ml-[95px]`}
-              onClick={() => setShowModal(true)}
+              className={`${fredoka.className} bg-[#d98f8f] hover:bg-[#a55c5c] text-white w-[70px] font-medium rounded-xl text-lg -ml-[95px] shadow-md`}
+              onClick={handleYesClick}
             >              
             Yes
             </Button>
@@ -113,14 +152,14 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
               className="relative z-20"
               style={{
                 position: "absolute",
-                left: `calc(100% + ${buttonPosition.x}px)`,
-                top: `${buttonPosition.y}px`,
+                left: isMobile ? "auto" : `calc(100% + ${buttonPosition.x}px)`,
+                top: isMobile ? "auto" : `${buttonPosition.y}px`,
               }}
-              animate={{ x: buttonPosition.x, y: buttonPosition.y }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              animate={isMobile ? undefined : { x: buttonPosition.x, y: buttonPosition.y }}
+              transition={isMobile ? undefined : { type: "spring", stiffness: 300, damping: 20 }}
             >
               <Button
-                className={`${fredoka.className} bg-gray-300 hover:bg-gray-400 text-gray-700 w-[70px] font-medium rounded-xl text-lg relative overflow-visible`}
+                className={`${fredoka.className} bg-gray-300 hover:bg-gray-400 text-gray-700 w-[70px] font-medium rounded-xl text-lg relative shadow-md overflow-visible`}
                 onClick={handleNoClick}
               >
                 <AnimatePresence mode="wait">
@@ -150,7 +189,16 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
               <AnimatePresence>
                 {noClicked && (
                   <motion.span
-                    className={`${poppins.className} absolute top-full left-1 transform -translate-x-1/2 mt-2 whitespace-nowrap bg-[#efcdd0] text-pink-800 px-4 py-2 rounded-xl text-md`}
+                    className={`
+                      ${poppins.className} 
+                      absolute top-full left-1 
+                      transform -translate-x-1/2 mt-2 
+                      bg-[#efcdd0] text-pink-800 
+                      px-4 py-2 rounded-xl text-md
+                      md:whitespace-nowrap
+                      max-w-[200px] md:max-w-none
+                      text-center
+                    `}
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
@@ -163,7 +211,18 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
             </motion.div>
           </div>
         </div>
-        <SuccessModal isOpen={showModal} onClose={() => setShowModal(false)} message={message}/>
+
+        {extraYesButtons.map((pos, index) => (
+          <YesButton
+            key={index}
+            onClick={handleYesClick}
+            position={pos}
+            zIndex={index}
+            onClear={() => setExtraYesButtons([])}
+          />
+        ))}
+
+        <SuccessModal isOpen={showModal} onClose={() => setShowModal(false)} message={message} />
       </div>
     )
   }
