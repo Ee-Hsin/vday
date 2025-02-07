@@ -121,7 +121,7 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
           className="w-[90vw] md:max-w-[750px] md:h-auto aspect-[1.414/1] max-h-[500px] md:max-h-none bg-[#ffffff] rounded-lg shadow-lg p-8 flex flex-col items-center z-10 justify-between"
         >
 
-          <h1 className={`${fredoka.className} text-4xl font-bold text-[#d98f8f] text-center flex items-center justify-center`}>
+          <h1 className={`${fredoka.className} text-4xl font-bold text-[#cd7b7b] text-center flex items-center justify-center`}>
             Hi {valentineName}, will you be my Valentine?
           </h1>
           
@@ -194,7 +194,7 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
                       absolute top-full left-1 
                       transform -translate-x-1/2 mt-2 
                       bg-[#efcdd0] text-pink-800 
-                      px-4 py-2 rounded-xl text-md
+                      px-4 py-2 rounded-xl md:text-md text-sm
                       md:whitespace-nowrap
                       max-w-[200px] md:max-w-none
                       text-center
