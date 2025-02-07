@@ -26,7 +26,7 @@ export default function FramedImage({ src, alt, caption, className = "" }: Frame
   return (
     <>
       <div
-        className={`relative p-4 bg-[#ffffff] hover:bg-pink-50 transition-colors duration-200 shadow-[0_0px_30px_0px_rgba(244,114,182,0.2),0_0px_20px_-5px_rgba(0,0,0,0.4)] rounded-lg cursor-pointer w-[200px] ${className}`}
+        className={`relative p-4 bg-[#f7eaee] hover:bg-[#efcdd0] transition-colors duration-200 shadow-[0_0px_30px_0px_rgba(244,114,182,0.2),0_0px_20px_-5px_rgba(0,0,0,0.4)] rounded-lg cursor-pointer w-[200px] ${className}`}
         onClick={() => setIsModalOpen(true)}
       >
         <div className="relative flex flex-col">
