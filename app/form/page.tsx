@@ -23,9 +23,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { MdHome } from "react-icons/md";
 import { Fredoka, Poppins } from "next/font/google";
-import mofuFlower from "../../assets/mofu flower final.png"
-import mofuHeart from "../../assets/mofu heart final.png"
+import mofuFlower from "../../assets/mofu flower final.png";
+import mofuHeart from "../../assets/mofu heart final.png";
 import imageCompression from "browser-image-compression";
+import stamp1 from "../../assets/stamp 1.png";
+import stamp2 from "../../assets/stamp 2.png";
+import stamp3 from "../../assets/stamp 3.png";
+import stampFrame from "../../assets/square stamp frame.png";
 
 const fredoka = Fredoka({
   subsets: ["latin"],
@@ -46,7 +50,7 @@ const formSchema = z
     caption1: z.string().optional(),
     image2: z.custom<File>().optional(),
     caption2: z.string().optional(),
-    selectedStamp: z.string().min(1, "Please select a stamp")
+    selectedStamp: z.string().min(1, "Please select a stamp"),
   })
   .refine(
     (data) => (data.image1 ? (data.caption1 ?? "").trim().length > 0 : true),
@@ -92,9 +96,9 @@ export default function ValentineForm() {
   const [loading, setLoading] = useState(false);
 
   const stamps = [
-    { id: "stamp1", src: "/path-to-stamp1.png", alt: "Cats with cake" },
-    { id: "stamp2", src: "/path-to-stamp2.png", alt: "Two cats with heart" },
-    { id: "stamp3", src: "/path-to-stamp3.png", alt: "Penguin cats" },
+    { id: "stamp1", src: stamp1, alt: "Cats with cake" },
+    { id: "stamp2", src: stamp2, alt: "Two cats with heart" },
+    { id: "stamp3", src: stamp3, alt: "Penguin cats" },
   ];
 
   const router = useRouter();
@@ -121,8 +125,8 @@ export default function ValentineForm() {
         timestamp: new Date(),
       });
 
-      let image1URL = null
-      let image2URL = null
+      let image1URL = null;
+      let image2URL = null;
 
       const compressionOptions = {
         maxSizeMB: 0.5, // Target max size
@@ -131,7 +135,10 @@ export default function ValentineForm() {
       };
 
       if (values.image1 && values.caption1) {
-        const compressedImage = await imageCompression(values.image1, compressionOptions)
+        const compressedImage = await imageCompression(
+          values.image1,
+          compressionOptions
+        );
 
         image1URL = await uploadImage(
           compressedImage,
@@ -140,7 +147,10 @@ export default function ValentineForm() {
       }
 
       if (values.image2 && values.caption2) {
-        const compressedImage = await imageCompression(values.image2, compressionOptions)
+        const compressedImage = await imageCompression(
+          values.image2,
+          compressionOptions
+        );
 
         image2URL = await uploadImage(
           compressedImage,
@@ -234,7 +244,9 @@ export default function ValentineForm() {
                 />
                 {/* Stamp Selection */}
                 <div className="space-y-2">
-                  <h3 className={`text-white text-xl ${fredoka.className}`}>
+                  <h3
+                    className={`text-white text-xl font-semibold ${fredoka.className}`}
+                  >
                     Select Stamp
                   </h3>
                   <FormField
@@ -252,8 +264,9 @@ export default function ValentineForm() {
                                   setSelectedStamp(stamp.id);
                                   form.setValue("selectedStamp", stamp.id);
                                 }}
+                                // We'll need to add the selectedStamp photo and switch to that instead
                                 className={`
-                                  w-24 h-24 rounded-lg p-1 transition-all
+                                  w-24 h-24 rounded-lg p-1 transition-all relative
                                   ${
                                     selectedStamp === stamp.id
                                       ? "bg-white ring-2 ring-[#b35151]"
@@ -261,10 +274,15 @@ export default function ValentineForm() {
                                   }
                                 `}
                               >
-                                <img
+                                <Image
+                                  src={stampFrame}
+                                  alt="Stamp Frame"
+                                  className="w-full h-full object-contain absolute top-0 left-0 scale-110"
+                                />
+                                <Image
                                   src={stamp.src}
                                   alt={stamp.alt}
-                                  className="w-full h-full object-contain"
+                                  className="w-full h-full object-contain relative z-10"
                                 />
                               </button>
                             ))}
@@ -305,11 +323,24 @@ export default function ValentineForm() {
                               className="cursor-pointer block w-full h-full"
                             >
                               {preview1 ? (
-                                <img
-                                  src={preview1}
-                                  alt="Preview 1"
-                                  className="w-full h-40 object-cover rounded-lg"
-                                />
+                                <div className="relative">
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setPreview1(null);
+                                      onChange(null);
+                                    }}
+                                    className="absolute -top-2 -right-2 bg-[#c7564a] text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#cc0000] transition-colors z-20"
+                                  >
+                                    ×
+                                  </button>
+                                  <img
+                                    src={preview1}
+                                    alt="Preview 1"
+                                    className="w-full h-40 object-cover rounded-lg"
+                                  />
+                                </div>
                               ) : (
                                 <div className="flex items-center justify-center h-40 text-gray-500">
                                   Upload Photo 1
@@ -346,7 +377,7 @@ export default function ValentineForm() {
                             />
                           </FormControl>
                         </div>
-                        <FormMessage className="mt-2"/>
+                        <FormMessage className="mt-2" />
                       </FormItem>
                     )}
                   />
@@ -404,14 +435,27 @@ export default function ValentineForm() {
                               className="cursor-pointer block w-full h-full"
                             >
                               {preview2 ? (
-                                <img
-                                  src={preview2}
-                                  alt="Preview 2"
-                                  className="w-full h-40 object-cover rounded-lg"
-                                />
+                                <div className="relative">
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setPreview2(null);
+                                      onChange(null);
+                                    }}
+                                    className="absolute -top-2 -right-2 bg-[#c7564a] text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#cc0000] transition-colors z-20"
+                                  >
+                                    ×
+                                  </button>
+                                  <img
+                                    src={preview2}
+                                    alt="Preview 2"
+                                    className="w-full h-40 object-cover rounded-lg"
+                                  />
+                                </div>
                               ) : (
                                 <div className="flex items-center justify-center h-40 text-gray-500">
-                                  Upload Photo 2
+                                  Upload Photo 1
                                 </div>
                               )}
                             </label>
