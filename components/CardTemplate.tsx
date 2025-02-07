@@ -29,13 +29,35 @@ interface ValentineProposalProps {
     message: string
 }
 
+const noMessages = [
+  "are you sure?",
+  "really sure?",
+  "think again!",
+  "last chance!",
+  "surely not?",
+  "you might regret this!",
+  "give it another thought!",
+  "are you absolutely certain?",
+  "this could be a mistake!",
+  "have a heart!",
+  "don't be so cold!",
+  "change of heart?",
+  "wouldn't you reconsider?",
+  "is that your final answer?",
+  "you're breaking my heart ;("
+];
+
 export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCaption2, valentineName, message} : ValentineProposalProps) {
     const [showModal, setShowModal] = useState(false)
     const [noClicked, setNoClicked] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null);
     const { buttonPosition, handleMouseMove } = useMovingButton()
-    // const { buttonPosition, handleMouseMove } = useMovingButton(containerRef);
+    const [messageIndex, setMessageIndex] = useState(0);
 
+    const handleNoClick = () => {
+      setNoClicked(true);
+      setMessageIndex((prev) => (prev + 1) % noMessages.length);
+    };
   
     useEffect(() => {
       if (noClicked) {
@@ -47,7 +69,6 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
     }, [noClicked])
 
     
-  
     return (
       <div
         className="min-h-screen bg-pink-100 flex flex-col items-center justify-center p-4 overflow-hidden relative"
@@ -100,7 +121,7 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
             >
               <Button
                 className={`${fredoka.className} bg-gray-300 hover:bg-gray-400 text-gray-700 w-[70px] font-medium rounded-xl text-lg relative overflow-visible`}
-                onClick={() => setNoClicked(true)}
+                onClick={handleNoClick}
               >
                 <AnimatePresence mode="wait">
                   {noClicked ? (
@@ -111,7 +132,7 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <BrokenHeart size={24} color="rgba(255, 105, 180, 0.7)" />
+                      <BrokenHeart size={24} color="rgba(192, 58, 75, 0.7)" />
                     </motion.div>
                   ) : (
                     <motion.span
@@ -129,13 +150,13 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
               <AnimatePresence>
                 {noClicked && (
                   <motion.span
-                    className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 whitespace-nowrap bg-pink-100 px-2 py-1 rounded text-sm"
+                    className={`${poppins.className} absolute top-full left-1 transform -translate-x-1/2 mt-2 whitespace-nowrap bg-[#efcdd0] text-pink-800 px-4 py-2 rounded-xl text-md`}
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.3 }}
                   >
-                    erm, can you click yes instead?
+                    {noMessages[messageIndex]}
                   </motion.span>
                 )}
               </AnimatePresence>
