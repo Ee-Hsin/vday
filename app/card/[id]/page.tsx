@@ -59,7 +59,9 @@ export default function CardPage() {
       imgUrl2={cardData.image2URL || "/fallback-image.jpg"}
       imgCaption2={cardData.caption2 || ""}
       valentineName={cardData.recipientName}
+      senderName={cardData.senderName}
       message={cardData.message}
+      selectedStamp={cardData.selectedStamp || ""}
     />
     // <div>
     //   <h1>Your Valentine Card</h1>

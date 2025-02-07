@@ -1,6 +1,6 @@
 "use client"
 
-import ValentineProposal from "@/components/ValentineProposalTemplate";
+import ValentineProposal from "@/components/CardTemplate";
 
 export default function Example() {
   return (
@@ -10,6 +10,7 @@ export default function Example() {
       imgUrl2="/first-date.jpg"
       imgCaption2="Our first date"
       valentineName="Jane Doe"
+      senderName="John Doe"
       message="I'll see you at 7:30 then, I've already made reservations it's gonna be great!"
     />
   );

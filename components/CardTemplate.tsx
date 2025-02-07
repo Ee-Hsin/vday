@@ -8,9 +8,14 @@ import FramedImage from "../components/FramedImage"
 import BrokenHeart from "../components/BrokenHeart"
 import NiceHeart from "../components/NiceHeart"
 import ClickHeartEffect from "@/components/ClickHeartEffect"
-import { Fredoka, Poppins } from "next/font/google"
+import { Fredoka, Poppins, Nanum_Pen_Script } from "next/font/google"
 import { useIsMobile } from "@/hooks/use-mobile" // Add this import
 import { YesButton } from "../components/YesButton"
+import stamp1 from "@/assets/stamp 1.png"
+import stamp2 from "@/assets/stamp 2.png"
+import stamp3 from "@/assets/stamp 3.png"
+import stampFrame from "@/assets/square stamp frame.png"
+import Image from "next/image"
 
 
 const fredoka = Fredoka({
@@ -23,13 +28,20 @@ const poppins = Poppins({
   weight: ["400"],
 })
 
+const nanumPen = Nanum_Pen_Script({
+  weight: "400",
+  subsets: ["latin"],
+})
+
 interface ValentineProposalProps {
     imgUrl: string
     imgCaption: string
     imgUrl2: string
     imgCaption2: string
     valentineName: string
+    senderName: string
     message: string
+    selectedStamp?: string
 }
 
 const noMessages = [
@@ -50,14 +62,15 @@ const noMessages = [
   "you're breaking my heart ;("
 ];
 
-export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCaption2, valentineName, message} : ValentineProposalProps) {
+export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCaption2, valentineName, senderName, message, selectedStamp = "stamp1"} : ValentineProposalProps) {
     const [showModal, setShowModal] = useState(false)
     const [noClicked, setNoClicked] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null);
     const { buttonPosition, handleMouseMove } = useMovingButton()
     const [messageIndex, setMessageIndex] = useState(0);
     const [extraYesButtons, setExtraYesButtons] = useState<{x: number, y: number}[]>([]);
-    const isMobile = useIsMobile(); // Add this hook
+    const isMobile = useIsMobile(); 
+    const [isEnvelopeOpen, setIsEnvelopeOpen] = useState(false);
 
     const handleYesClick = () => {
       setShowModal(true);
@@ -116,12 +129,52 @@ export default function ValentineProposal({imgUrl, imgCaption, imgUrl2, imgCapti
         <ClickHeartEffect />
         <HeartBackground />
 
+        <AnimatePresence>
+          {!isEnvelopeOpen && (
+            <motion.div
+              className="absolute bg-[#d98f8f] rounded-lg shadow-xl cursor-pointer z-20 
+              w-[calc(90vw+6px)] h-[500px] 
+              md:max-w-[756px] md:h-[506px]
+              flex flex-col items-center justify-center
+              transition-shadow duration-300
+              hover:shadow-[0_0px_50px_-5px_rgba(204,75,96,0.6)]"
+              initial={{ y: 0 }}
+              exit={{ y: '150%', transition: { duration: 0.5, ease: 'easeIn' } }}
+              onClick={() => setIsEnvelopeOpen(true)}
+            >
+            <div className="absolute top-6 right-6 w-24 h-24 p-1">
+              <Image
+                src={stampFrame}
+                alt="Stamp Frame"
+                className="w-full h-full object-contain absolute top-0 left-0 scale-110"
+              />
+              <Image
+                src={
+                  selectedStamp === "stamp2"
+                    ? stamp2
+                    : selectedStamp === "stamp3"
+                    ? stamp3
+                    : stamp1
+                }
+                alt="Selected Stamp"
+                className="w-full h-full object-contain relative z-10"
+              />
+            </div>
+              <div className={`${nanumPen.className} text-white text-5xl md:text-7xl space-y-2`}>
+                <p>To: {valentineName}</p>
+                <p>From: {senderName}</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div
           ref={containerRef} 
-          className="w-[90vw] md:max-w-[750px] md:h-auto aspect-[1.414/1] max-h-[500px] md:max-h-none bg-[#ffffff] rounded-lg shadow-lg p-8 flex flex-col items-center z-10 justify-between"
+          className="w-[90vw] h-[480px] md:max-w-[750px] md:h-[500px] 
+          bg-[#ffffff] rounded-lg shadow-lg p-8 flex flex-col items-center z-10 justify-between"
         >
 
-          <h1 className={`${fredoka.className} text-4xl font-bold text-[#cd7b7b] text-center flex items-center justify-center`}>
+          <h1 className={`${fredoka.className} text-3xl md:text-4xl font-bold text-[#cd7b7b] text-center flex items-center justify-center `}>
             Hi {valentineName}, will you be my Valentine?
           </h1>
           
