@@ -2,6 +2,8 @@ import Image from "next/image"
 import { useState } from "react"
 import ImageModal from "./ImageModal"
 import { Fredoka, Poppins } from "next/font/google"
+import stamp1 from "@/assets/stamp 1.png"
+
 
 interface FramedImageProps {
   src: string
@@ -20,7 +22,12 @@ const poppins = Poppins({
   weight: ["400"],
 })
 
-export default function FramedImage({ src, alt, caption, className = "" }: FramedImageProps) {
+export default function FramedImage({
+  src,
+  alt,
+  caption,
+  className = "",
+}: FramedImageProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
@@ -32,19 +39,30 @@ export default function FramedImage({ src, alt, caption, className = "" }: Frame
         <div className="relative flex flex-col">
           {/* Fixed square image container */}
           <div className="relative aspect-square w-full transform">
-            <Image
-              src={src || "/placeholder.svg"}
-              alt={alt}
-              fill
-              className="rounded-lg object-cover"
-            />
+            {src == "fallbackStamp" ? (
+              <Image
+                src={stamp1}
+                alt={alt}
+                fill
+                className="rounded-lg object-cover"
+              />
+            ) : (
+              <Image
+                src={src || "/placeholder.svg"}
+                alt={alt}
+                fill
+                className="rounded-lg object-cover"
+              />
+            )}
           </div>
           {/* Caption with automatic height */}
-          <p className={`
+          <p
+            className={`
             text-center text-sm mt-2 text-pink-800
             ${poppins.className}
             line-clamp-3
-          `}>
+          `}
+          >
             {caption}
           </p>
         </div>

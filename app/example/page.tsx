@@ -10,7 +10,7 @@ export default function Example() {
       imgUrl2="/first-date.jpg"
       imgCaption2="Our first date"
       valentineName="Jane Doe"
-      senderName="John Doe"
+      senderName="Paul Smith"
       message="I'll see you at 7:30 then, I've already made reservations it's gonna be great!"
     />
   );
