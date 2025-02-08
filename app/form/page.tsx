@@ -30,6 +30,9 @@ import stamp1 from "../../assets/stamp 1.png";
 import stamp2 from "../../assets/stamp 2.png";
 import stamp3 from "../../assets/stamp 3.png";
 import stampFrame from "../../assets/square stamp frame.png";
+import ClickHeartEffect from "@/components/ClickHeartEffect";
+import HeartBackground from "@/components/HeartBackground"
+
 
 const fredoka = Fredoka({
   subsets: ["latin"],
@@ -180,13 +183,15 @@ export default function ValentineForm() {
     <div
       className={`min-h-screen flex items-center justify-center bg-[#ffeded] ${poppins.className}`}
     >
+      <HeartBackground />
+      <ClickHeartEffect />
       <Link
         href="/"
         className="absolute top-5 left-5 z-20 text-[#d98f8f] hover:text-[#b35151] transition-colors"
       >
         <MdHome className="w-[4vh] h-[4vh] md:w-[40px] md:h-[40px]" />
       </Link>
-      <div className="container mx-auto px-4 max-w-7xl pt-20 md:pt-0">
+      <div className="container mx-auto px-4 max-w-7xl pt-20 md:pt-0 z-10">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="flex flex-col md:flex-row gap-6">
