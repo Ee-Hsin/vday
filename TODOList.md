@@ -2,8 +2,10 @@ ToDo list:
 
 Frontend:
 1. The Form
-    1. Handle HEIC and other image files
-    2. Add analytics metrics for submissions <-- Jordan
+    1. add loader for the previews cuz takes some time with HEIC
+    2. replace form with loader after submit is hit
+    3. Add analytics metrics for submissions <-- Jordan
+    4. Improve the efficiency of heic uploads because conversion is done in preview, can reuse that logic
 2. Success page
     1. Add analytics metrics for copied links <-- Jordan
 3. The Card:

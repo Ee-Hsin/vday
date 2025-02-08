@@ -47,6 +47,7 @@
     "embla-carousel-react": "8.5.1",
     "firebase": "^11.2.0",
     "framer-motion": "latest",
+    "heic2any": "^0.0.4",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
     "next": "14.2.16",

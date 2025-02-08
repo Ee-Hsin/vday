@@ -1,8 +1,8 @@
-"use client";
+"use client"
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
 import {
   Form,
   FormControl,
@@ -10,39 +10,39 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { db, storage } from "@/lib/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { collection, addDoc, updateDoc } from "firebase/firestore";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
-import { MdHome } from "react-icons/md";
-import { Fredoka, Poppins } from "next/font/google";
-import mofuFlower from "../../assets/mofu flower final.png";
-import mofuHeart from "../../assets/mofu heart final.png";
-import imageCompression from "browser-image-compression";
-import stamp1 from "../../assets/stamp 1.png";
-import stamp2 from "../../assets/stamp 2.png";
-import stamp3 from "../../assets/stamp 3.png";
-import stampFrame from "../../assets/square stamp frame.png";
-import ClickHeartEffect from "@/components/ClickHeartEffect";
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+import { useState } from "react"
+import { db, storage } from "@/lib/firebase"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import { collection, addDoc, updateDoc } from "firebase/firestore"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import Image from "next/image"
+import { MdHome } from "react-icons/md"
+import { Fredoka, Poppins } from "next/font/google"
+import mofuFlower from "../../assets/mofu flower final.png"
+import mofuHeart from "../../assets/mofu heart final.png"
+import imageCompression from "browser-image-compression"
+import stamp1 from "../../assets/stamp 1.png"
+import stamp2 from "../../assets/stamp 2.png"
+import stamp3 from "../../assets/stamp 3.png"
+import stampFrame from "../../assets/square stamp frame.png"
+import ClickHeartEffect from "@/components/ClickHeartEffect"
 import HeartBackground from "@/components/HeartBackground"
-
+import heic2any from "heic2any"
 
 const fredoka = Fredoka({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-});
+})
 
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400"],
-});
+})
 
 const formSchema = z
   .object({
@@ -78,7 +78,7 @@ const formSchema = z
     message:
       "You wrote a caption for your second image but forgot to upload the image!",
     path: ["image2"],
-  });
+  })
 
 export default function ValentineForm() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -91,32 +91,74 @@ export default function ValentineForm() {
       caption2: "",
       selectedStamp: "",
     },
-  });
+  })
 
-  const [selectedStamp, setSelectedStamp] = useState<string | null>(null);
-  const [preview1, setPreview1] = useState<string | null>(null);
-  const [preview2, setPreview2] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [selectedStamp, setSelectedStamp] = useState<string | null>(null)
+  const [preview1, setPreview1] = useState<string | null>(null)
+  const [preview2, setPreview2] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const stamps = [
     { id: "stamp1", src: stamp1, alt: "Cats with cake" },
     { id: "stamp2", src: stamp2, alt: "Two cats with heart" },
     { id: "stamp3", src: stamp3, alt: "Penguin cats" },
-  ];
+  ]
 
-  const router = useRouter();
+  const router = useRouter()
 
   async function uploadImage(file: File | undefined, path: string) {
-    if (!file) return null;
-    const storageRef = ref(storage, path);
-    const snapshot = await uploadBytes(storageRef, file);
-    return await getDownloadURL(snapshot.ref);
+    if (!file) return null
+    const storageRef = ref(storage, path)
+    const snapshot = await uploadBytes(storageRef, file)
+    return await getDownloadURL(snapshot.ref)
+  }
+
+  interface CompressionOptions {
+    maxSizeMB: number
+    maxWidthOrHeight: number
+    useWebWorker: boolean
+  }
+
+  async function handleImageCompression(
+    imageFile: File,
+    compressionOptions: CompressionOptions
+  ): Promise<File | null> {
+    try {
+      let fileToCompress: File = imageFile
+
+      // Convert HEIC to JPEG if needed
+      if (
+        imageFile.type === "image/heic" ||
+        imageFile.name.endsWith(".heic") ||
+        imageFile.type === "image/heif" ||
+        imageFile.name.endsWith(".heif")
+      ) {
+        const blob = await heic2any({ blob: imageFile, toType: "image/jpeg" })
+        fileToCompress = new File(
+          [blob as Blob],
+          imageFile.name.replace(/\.heic$/, ".jpg"),
+          {
+            type: "image/jpeg",
+          }
+        )
+      }
+
+      // Compress the (converted) image
+      const compressedImage = await imageCompression(
+        fileToCompress,
+        compressionOptions
+      )
+      return compressedImage
+    } catch (error) {
+      console.error("Image processing failed:", error)
+      return null
+    }
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setLoading(true);
+    setLoading(true)
 
-    console.log(values);
+    console.log(values)
     try {
       const docRef = await addDoc(collection(db, "valentineMessages"), {
         senderName: values.senderName,
@@ -126,56 +168,60 @@ export default function ValentineForm() {
         caption2: values.caption2 || null,
         selectedStamp: values.selectedStamp,
         timestamp: new Date(),
-      });
+      })
 
-      let image1URL = null;
-      let image2URL = null;
+      let image1URL = null
+      let image2URL = null
 
       const compressionOptions = {
         maxSizeMB: 0.5, // Target max size
         maxWidthOrHeight: 800, // Max width/height
         useWebWorker: true, // Improve performance
-      };
+      }
 
       if (values.image1 && values.caption1) {
-        const compressedImage = await imageCompression(
+        const compressedImage = await handleImageCompression(
           values.image1,
           compressionOptions
-        );
+        )
 
-        image1URL = await uploadImage(
-          compressedImage,
-          `valentines/${docRef.id}/image1-${Date.now()}`
-        );
+        if (compressedImage) {
+          image1URL = await uploadImage(
+            compressedImage,
+            `valentines/${docRef.id}/image1-${Date.now()}`
+          )
+        }
       }
 
       if (values.image2 && values.caption2) {
-        const compressedImage = await imageCompression(
+        const compressedImage = await handleImageCompression(
           values.image2,
           compressionOptions
-        );
+        )
 
-        image2URL = await uploadImage(
-          compressedImage,
-          `valentines/${docRef.id}/image2-${Date.now()}`
-        );
+        if (compressedImage) {
+          image2URL = await uploadImage(
+            compressedImage,
+            `valentines/${docRef.id}/image2-${Date.now()}`
+          )
+        }
       }
 
       await updateDoc(docRef, {
         image1URL,
         image2URL,
-      });
+      })
 
-      form.reset();
-      setPreview1(null);
-      setPreview2(null);
+      form.reset()
+      setPreview1(null)
+      setPreview2(null)
 
-      router.push(`/success?id=${docRef.id}`);
+      router.push(`/success?id=${docRef.id}`)
     } catch (error) {
-      console.error("Error saving message:", error);
-      alert("Error saving message. Please try again.");
+      console.error("Error saving message:", error)
+      alert("Error saving message. Please try again.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -266,8 +312,8 @@ export default function ValentineForm() {
                                 key={stamp.id}
                                 type="button"
                                 onClick={() => {
-                                  setSelectedStamp(stamp.id);
-                                  form.setValue("selectedStamp", stamp.id);
+                                  setSelectedStamp(stamp.id)
+                                  form.setValue("selectedStamp", stamp.id)
                                 }}
                                 // We'll need to add the selectedStamp photo and switch to that instead
                                 className={`
@@ -320,13 +366,47 @@ export default function ValentineForm() {
                           <div className="text-center">
                             <Input
                               type="file"
-                              accept="image/*"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0] || null;
-                                onChange(file);
-                                setPreview1(
-                                  file ? URL.createObjectURL(file) : null
-                                );
+                              accept="image/*, .heic, .heif"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0] || null
+                                if (!file) return
+
+                                let previewUrl = null
+
+                                if (
+                                  file.type === "image/heic" ||
+                                  file.name.endsWith(".heic") ||
+                                  file.type === "image/heif" ||
+                                  file.name.endsWith(".heif")
+                                ) {
+                                  try {
+                                    // Convert HEIC to JPEG
+                                    const blob = await heic2any({
+                                      blob: file,
+                                      toType: "image/jpeg",
+                                    })
+                                    const convertedFile = new File(
+                                      [blob as Blob],
+                                      file.name.replace(/\.heic$/, ".jpg"),
+                                      {
+                                        type: "image/jpeg",
+                                      }
+                                    )
+
+                                    previewUrl =
+                                      URL.createObjectURL(convertedFile)
+                                  } catch (error) {
+                                    console.error(
+                                      "HEIC conversion failed:",
+                                      error
+                                    )
+                                  }
+                                } else {
+                                  previewUrl = URL.createObjectURL(file)
+                                }
+
+                                onChange(file)
+                                setPreview1(previewUrl)
                               }}
                               className="hidden"
                               id="image1"
@@ -340,9 +420,9 @@ export default function ValentineForm() {
                                   <button
                                     type="button"
                                     onClick={(e) => {
-                                      e.preventDefault();
-                                      setPreview1(null);
-                                      onChange(null);
+                                      e.preventDefault()
+                                      setPreview1(null)
+                                      onChange(null)
                                     }}
                                     className="absolute -top-2 -right-2 bg-[#c7564a] text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#cc0000] transition-colors z-20"
                                   >
@@ -432,13 +512,47 @@ export default function ValentineForm() {
                           <div className="text-center">
                             <Input
                               type="file"
-                              accept="image/*"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0] || null;
-                                onChange(file);
-                                setPreview2(
-                                  file ? URL.createObjectURL(file) : null
-                                );
+                              accept="image/*, .heic, .heif"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0] || null
+                                if (!file) return
+
+                                let previewUrl = null
+
+                                if (
+                                  file.type === "image/heic" ||
+                                  file.name.endsWith(".heic") ||
+                                  file.type === "image/heif" ||
+                                  file.name.endsWith(".heif")
+                                ) {
+                                  try {
+                                    // Convert HEIC to JPEG
+                                    const blob = await heic2any({
+                                      blob: file,
+                                      toType: "image/jpeg",
+                                    })
+                                    const convertedFile = new File(
+                                      [blob as Blob],
+                                      file.name.replace(/\.heic$/, ".jpg"),
+                                      {
+                                        type: "image/jpeg",
+                                      }
+                                    )
+
+                                    previewUrl =
+                                      URL.createObjectURL(convertedFile)
+                                  } catch (error) {
+                                    console.error(
+                                      "HEIC conversion failed:",
+                                      error
+                                    )
+                                  }
+                                } else {
+                                  previewUrl = URL.createObjectURL(file)
+                                }
+
+                                onChange(file)
+                                setPreview2(previewUrl)
                               }}
                               className="hidden"
                               id="image2"
@@ -452,9 +566,9 @@ export default function ValentineForm() {
                                   <button
                                     type="button"
                                     onClick={(e) => {
-                                      e.preventDefault();
-                                      setPreview2(null);
-                                      onChange(null);
+                                      e.preventDefault()
+                                      setPreview2(null)
+                                      onChange(null)
                                     }}
                                     className="absolute -top-2 -right-2 bg-[#c7564a] text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#cc0000] transition-colors z-20"
                                   >
@@ -468,7 +582,7 @@ export default function ValentineForm() {
                                 </div>
                               ) : (
                                 <div className="flex items-center justify-center h-40 text-gray-500">
-                                  Upload Photo 1
+                                  Upload Photo 2
                                 </div>
                               )}
                             </label>
@@ -495,5 +609,5 @@ export default function ValentineForm() {
         </Form>
       </div>
     </div>
-  );
+  )
 }
