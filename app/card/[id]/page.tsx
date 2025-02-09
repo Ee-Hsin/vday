@@ -7,6 +7,7 @@ import { analytics, db } from '@/lib/firebase'; // Your Firebase initialization
 import { doc, getDoc } from 'firebase/firestore'; // Import getFirestore
 import ValentineProposal from "@/components/CardTemplate";
 import LoadingScreen from "@/components/LoadingScreen"
+import ErrorScreen from "@/components/ErrorScreen"
 import { logEvent } from 'firebase/analytics';
 
 export default function CardPage() {
@@ -49,7 +50,7 @@ export default function CardPage() {
   }
 
   if (error) {
-    return <div>Error: {error}</div>; // Display error message
+    return <ErrorScreen message={error} />
   }
 
   if (!cardData) { // Data could be null if there was an issue or the doc doesn't exist
