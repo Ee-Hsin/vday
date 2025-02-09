@@ -24,12 +24,12 @@ export default function Page() {
   const isClient = typeof window !== "undefined"
 
   return (
-    <div className="h-svh relative bg-[#ffeded] overflow-hidden">
+    <div className="h-svh md:h-screen relative bg-[#ffeded] overflow-hidden">
       <HeartBackground />
       <ClickHeartEffect />
-      <div className="relative z-10 mt-[5svh] md:mt-[80px] px-[5vw] md:px-0 md:ml-[100px] w-full md:w-auto text-center md:text-left">
+      <div className="relative z-10 mt-[5svh] md:mt-[65px] px-[5vw] md:px-0 md:ml-[80px] w-full md:w-auto text-center md:text-left">
         <h1
-          className={`text-[12vw] md:text-9xl font-bold mb-[0svh] text-[#d98f8f] ${fredoka.className}`}
+          className={`text-[12vw] md:text-8xl font-bold mb-[0svh] text-[#d98f8f] ${fredoka.className}`}
         >
           Valentine&apos;s Day
         </h1>
@@ -39,7 +39,7 @@ export default function Page() {
           Digital Card Generator
         </h2>
         <p
-          className={`text-[5vw] md:text-4xl max-w-5xl leading-relaxed text-[#aa9a7d] ${poppins.className}`}
+          className={`text-[5vw] md:text-3xl max-w-3xl leading-relaxed text-[#aa9a7d] ${poppins.className}`}
         >
           <span>Your potential valentine deserves more than a DM.</span>
           <span className="inline md:hidden">&nbsp;</span>
@@ -51,7 +51,7 @@ export default function Page() {
         </p>
       </div>
 
-      <div className="relative z-10 mt-[5svh] md:mt-[7.5svh] px-[5vw] flex gap-[4vw] md:justify-normal justify-center">
+      <div className="relative z-10 mt-[3svh] md:mt-[5svh] px-[5vw] flex gap-[4vw] md:justify-normal justify-center">
         <Link href="/form">
           <button
             className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2svh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap 
