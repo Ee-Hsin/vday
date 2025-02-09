@@ -492,7 +492,7 @@ export default function ValentineForm() {
                           <FormMessage />
                         </FormItem>
                         <div className="flex items-center justify-center">
-                          <span className="text-gray-400 text-xs text-center">
+                          <span className="text-gray-400 text-sm text-center">
                             Photo 1 <br className="md:hidden"/> Upload
                           </span>
                         </div>
@@ -519,7 +519,7 @@ export default function ValentineForm() {
                             <Textarea
                               placeholder="Photo 1 Caption"
                               {...field}
-                              className="bg-transparent border-none text-[4svw] md:text-base min-h-[4rem] max-h-[4rem] overflow-y-auto resize-none p-0"
+                              className="bg-transparent border-none text-sm md:text-sm min-h-[4rem] max-h-[4rem] overflow-y-auto resize-none p-0"
                             />
                           </FormControl>
                         </div>
@@ -542,12 +542,12 @@ export default function ValentineForm() {
                             className="object-cover mt-4"
                           />
                         </div>
-                        <div className="bg-white p-4 border-8 border-[#fff4f4] rounded-b-xl">
+                        <div className="bg-white p-4 border-8 border-[#fff4f4] rounded-b-xl flex-1">
                           <FormControl>
                             <Textarea
                               placeholder="Photo 2 Caption"
                               {...field}
-                              className="bg-transparent border-none text-[4svw] md:text-base min-h-[4rem] max-h-[4rem] overflow-y-auto resize-none p-0"
+                              className="bg-transparent border-none text-sm min-h-[4rem] max-h-[4rem] overflow-y-auto resize-none p-0"
                             />
                           </FormControl>
                         </div>
@@ -669,7 +669,7 @@ export default function ValentineForm() {
                           <FormMessage />
                         </FormItem>
                         <div className="flex items-center justify-center">
-                          <span className="text-gray-400 text-xs text-center">
+                          <span className="text-gray-400 text-sm text-center">
                             Photo 2 <br className="md:hidden"/> Upload
                           </span>
                         </div>
