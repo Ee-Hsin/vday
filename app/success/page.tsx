@@ -13,6 +13,8 @@ import { MdHome } from "react-icons/md"
 import { useEffect, useState } from "react"
 import { IoCopy } from "react-icons/io5"
 import toast, { Toaster } from "react-hot-toast"
+import { logEvent } from "firebase/analytics";
+import { analytics } from "@/lib/firebase"; 
 
 const fredoka = Fredoka({
   subsets: ["latin"],
@@ -95,6 +97,10 @@ function SearchParamsContent() {
           secondary: "#fff",
         },
       })
+
+      if (analytics) {
+        logEvent(analytics, "link_copied", { button_name: "copy_link" });
+      }
     } catch (err) {
       console.error("Failed to copy:", err)
     }

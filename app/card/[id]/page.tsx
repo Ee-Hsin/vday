@@ -3,9 +3,10 @@
 
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase'; // Your Firebase initialization
+import { analytics, db } from '@/lib/firebase'; // Your Firebase initialization
 import { doc, getDoc } from 'firebase/firestore'; // Import getFirestore
 import ValentineProposal from "@/components/CardTemplate";
+import { logEvent } from 'firebase/analytics';
 
 export default function CardPage() {
   const params = useParams();
@@ -30,6 +31,9 @@ export default function CardPage() {
       } catch (err) {
         setError("Error fetching card"); // Set error message
       } finally {
+        if (analytics){
+          logEvent(analytics, "custom_card_viewed", { id: id})
+        }
         setLoading(false); // Set loading to false after fetch attempt
       }
     }

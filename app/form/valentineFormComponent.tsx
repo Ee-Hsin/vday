@@ -33,6 +33,8 @@ import stampFrame from "../../assets/square stamp frame.png"
 import ClickHeartEffect from "@/components/ClickHeartEffect"
 import HeartBackground from "@/components/HeartBackground"
 import heic2any from "heic2any"
+import { logEvent } from "firebase/analytics"
+import { analytics } from "@/lib/firebase"
 
 const fredoka = Fredoka({
   subsets: ["latin"],
@@ -158,6 +160,10 @@ export default function ValentineForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true)
 
+    if (analytics) {
+      logEvent(analytics, "form_submitted_start", { button_name: "submit" })
+    }
+
     console.log(values)
     try {
       const docRef = await addDoc(collection(db, "valentineMessages"), {
@@ -211,6 +217,11 @@ export default function ValentineForm() {
         image1URL,
         image2URL,
       })
+
+      if (analytics) {
+        console.log("form_submitted_successful", { button_name: "submit" })
+        logEvent(analytics, "form_submitted_successful", { button_name: "submit" })
+      }
 
       form.reset()
       setPreview1(null)
