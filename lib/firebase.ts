@@ -1,7 +1,7 @@
 // lib/firebase.js
 
 import { initializeApp } from 'firebase/app';
-import { getAnalytics, isSupported } from "firebase/analytics";
+import { getAnalytics, isSupported, Analytics } from "firebase/analytics";
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
@@ -19,8 +19,10 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
+// Explicitly type `analytics` as Analytics (or undefined if not supported yet)
+let analytics: Analytics | undefined = undefined;
+
 // 🔥 Prevents errors in SSR by ensuring Analytics only runs in the browser
-let analytics = null;
 if (typeof window !== "undefined") {
   isSupported().then((supported) => {
     if (supported) {
