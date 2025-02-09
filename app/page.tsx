@@ -8,6 +8,7 @@ import { useState } from "react"
 import { Fredoka, Poppins } from "next/font/google"
 import HeartBackground from "@/components/HeartBackground"
 import ClickHeartEffect from "@/components/ClickHeartEffect"
+import ExampleModal from "@/components/ExampleModal"
 
 const fredoka = Fredoka({
   subsets: ["latin"],
@@ -22,6 +23,7 @@ const poppins = Poppins({
 export default function Page() {
 
   const isClient = typeof window !== "undefined"
+  const [isExampleOpen, setIsExampleOpen] = useState(false)
 
   return (
     <div className="h-svh md:h-screen relative bg-[#ffeded] overflow-hidden">
@@ -63,17 +65,21 @@ export default function Page() {
           </button>
         </Link>
 
-        <Link href="/example" target="_blank" rel="noopener noreferrer">
-          <button
-            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2svh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap
-            z-30 relative cursor-pointer
-            transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
-            ${fredoka.className}`}
-          >
-            See Example
-          </button>
-        </Link>
+        <button
+          onClick={() => setIsExampleOpen(true)}
+          className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2svh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap 
+          z-30 relative cursor-pointer
+          transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
+          ${fredoka.className}`}
+        >
+          See Example
+        </button>
       </div>
+
+      <ExampleModal 
+        isOpen={isExampleOpen}
+        onClose={() => setIsExampleOpen(false)}
+      />
 
       <Image
         src={bg}
