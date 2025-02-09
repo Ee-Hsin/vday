@@ -248,7 +248,7 @@ export default function ValentineForm() {
 
   return (
     <div
-      className={`min-h-screen flex items-center justify-center bg-[#ffeded] ${poppins.className}`}
+      className={`min-h-svh flex items-center justify-center bg-[#ffeded] ${poppins.className}`}
     >
       <HeartBackground />
       <ClickHeartEffect />
@@ -501,9 +501,9 @@ export default function ValentineForm() {
                         <div className="bg-white p-4 border-8 border-[#fff4f4] rounded-b-xl">
                           <FormControl>
                             <Input
-                              placeholder="Photo 1 Caption"
+                              placeholder="Caption 1"
                               {...field}
-                              className="bg-transparent border-none"
+                              className="bg-transparent border-none text-[4svw] md:text-base"
                             />
                           </FormControl>
                         </div>
@@ -529,9 +529,9 @@ export default function ValentineForm() {
                         <div className="bg-white p-4 border-8 border-[#fff4f4] rounded-b-xl">
                           <FormControl>
                             <Input
-                              placeholder="Photo 2 Caption"
+                              placeholder="Caption 2"
                               {...field}
-                              className="bg-transparent border-none"
+                              className="bg-transparent border-none text-[4svw] md:text-base"
                             />
                           </FormControl>
                         </div>

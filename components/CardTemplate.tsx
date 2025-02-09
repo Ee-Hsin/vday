@@ -134,7 +134,7 @@ export default function ValentineProposal({
 
   return (
     <div
-      className="min-h-screen bg-pink-100 flex flex-col items-center justify-center p-4 overflow-hidden relative"
+      className="min-h-svh bg-pink-100 flex flex-col items-center justify-center p-4 overflow-hidden relative"
       onMouseMove={handleMouseMove}
     >
       <ClickHeartEffect />

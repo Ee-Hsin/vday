@@ -28,7 +28,7 @@ const poppins = Poppins({
 
 function SuccessPage() {
   return (
-    <div className="h-screen relative bg-[#ffeded] overflow-hidden">
+    <div className="h-svh relative bg-[#ffeded] overflow-hidden">
       <Toaster position="bottom-center" />
       <HeartBackground />
       <ClickHeartEffect />

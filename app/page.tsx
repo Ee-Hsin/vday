@@ -24,7 +24,7 @@ export default function Page() {
   const isClient = typeof window !== "undefined"
 
   return (
-    <div className="h-screen relative bg-[#ffeded] overflow-hidden">
+    <div className="h-svh relative bg-[#ffeded] overflow-hidden">
       <HeartBackground />
       <ClickHeartEffect />
       <div className="relative z-10 mt-[5vh] md:mt-[80px] px-[5vw] md:px-0 md:ml-[100px] w-full md:w-auto text-center md:text-left">
