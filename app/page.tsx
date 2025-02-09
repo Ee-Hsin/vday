@@ -27,14 +27,14 @@ export default function Page() {
     <div className="h-svh relative bg-[#ffeded] overflow-hidden">
       <HeartBackground />
       <ClickHeartEffect />
-      <div className="relative z-10 mt-[5vh] md:mt-[80px] px-[5vw] md:px-0 md:ml-[100px] w-full md:w-auto text-center md:text-left">
+      <div className="relative z-10 mt-[5svh] md:mt-[80px] px-[5vw] md:px-0 md:ml-[100px] w-full md:w-auto text-center md:text-left">
         <h1
-          className={`text-[12vw] md:text-9xl font-bold mb-[0vh] text-[#d98f8f] ${fredoka.className}`}
+          className={`text-[12vw] md:text-9xl font-bold mb-[0svh] text-[#d98f8f] ${fredoka.className}`}
         >
           Valentine&apos;s Day
         </h1>
         <h2
-          className={`text-[10vw] md:text-7xl font-bold mb-[3.5vh] text-[#d98f8f] leading-[0.9] md:leading-normal ${fredoka.className}`}
+          className={`text-[10vw] md:text-7xl font-bold mb-[3.5svh] text-[#d98f8f] leading-[0.9] md:leading-normal ${fredoka.className}`}
         >
           Personal Website Generator
         </h2>
@@ -51,10 +51,10 @@ export default function Page() {
         </p>
       </div>
 
-      <div className="relative z-10 mt-[5vh] md:mt-[7.5vh] px-[5vw] flex gap-[4vw]">
+      <div className="relative z-10 mt-[5svh] md:mt-[7.5svh] px-[5vw] flex gap-[4vw]">
         <Link href="/form">
           <button
-            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap 
+            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2svh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap 
             z-30 relative cursor-pointer
             transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
             ${fredoka.className}`}
@@ -65,7 +65,7 @@ export default function Page() {
 
         <Link href="/example" target="_blank" rel="noopener noreferrer">
           <button
-            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap
+            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2svh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap
             z-30 relative cursor-pointer
             transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
             ${fredoka.className}`}

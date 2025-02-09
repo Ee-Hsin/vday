@@ -22,7 +22,7 @@ interface SuccessModalProps {
 export default function SuccessModal({ isOpen, onClose, message }: SuccessModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[90vw] md:max-w-[80vh] max-h-[70vh] bg-[#f7eaee] border-2 rounded-xl z-[9999] flex flex-col gap-4 p-6">
+      <DialogContent className="max-w-[90vw] md:max-w-[80svh] max-h-[70svh] bg-[#f7eaee] border-2 rounded-xl z-[9999] flex flex-col gap-4 p-6">
         <DialogHeader>
           <DialogTitle className={`${fredoka.className} text-4xl font-bold text-[#cd7b7b] text-center`}>
             Yay!!

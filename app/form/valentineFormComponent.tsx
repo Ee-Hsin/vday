@@ -256,7 +256,7 @@ export default function ValentineForm() {
         href="/"
         className="absolute top-5 left-5 z-20 text-[#d98f8f] hover:text-[#b35151] transition-colors"
       >
-        <MdHome className="w-[4vh] h-[4vh] md:w-[40px] md:h-[40px]" />
+        <MdHome className="w-[4svh] h-[4svh] md:w-[40px] md:h-[40px]" />
       </Link>
       <div className="container mx-auto px-4 max-w-7xl pt-20 md:pt-0 z-10">
         <Form {...form}>

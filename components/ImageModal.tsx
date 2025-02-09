@@ -23,7 +23,7 @@ interface ImageModalProps {
 export default function ImageModal({ isOpen, onClose, src, alt, caption }: ImageModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-[#f7eaee] border-2 max-w-[90vw] md:max-w-[70vh] max-h-[70vh] md:max-h-[90vh] p-6 pt-12 flex flex-col gap-4 items-center rounded-xl">
+      <DialogContent className="bg-[#f7eaee] border-2 max-w-[90vw] md:max-w-[70svh] max-h-[70svh] md:max-h-[90svh] p-6 pt-12 flex flex-col gap-4 items-center rounded-xl">
         <div className="relative aspect-square w-full flex-shrink-0">
           <Image 
             src={src || "/placeholder.svg"} 
@@ -33,7 +33,7 @@ export default function ImageModal({ isOpen, onClose, src, alt, caption }: Image
             className="rounded-lg" 
           />
         </div>
-        <div className="overflow-y-auto w-full max-h-[20vh] md:max-h-[30vh]">
+        <div className="overflow-y-auto w-full max-h-[20svh] md:max-h-[30svh]">
           <p className={`${poppins.className} text-center text-pink-800`}>
             {caption}
           </p>

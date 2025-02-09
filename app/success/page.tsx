@@ -36,7 +36,7 @@ function SuccessPage() {
         href="/"
         className="absolute top-5 left-5 z-20 text-[#d98f8f] hover:text-[#b35151] transition-colors"
       >
-        <MdHome className="w-[4vh] h-[4vh] md:w-[40px] md:h-[40px]" />
+        <MdHome className="w-[4svh] h-[4svh] md:w-[40px] md:h-[40px]" />
       </Link>
 
       {/* Content */}
@@ -107,9 +107,9 @@ function SearchParamsContent() {
   }
 
   return (
-    <div className="relative z-10 mt-[5vh] md:mt-[80px] md:ml-[5vw] text-center md:text-center md:w-[46vw]">
+    <div className="relative z-10 mt-[5svh] md:mt-[80px] md:ml-[5vw] text-center md:text-center md:w-[46vw]">
       <h1
-        className={`text-[14vw] leading-[1] md:text-8xl py-1 font-bold text-[#d98f8f] mb-[4vh] md:mb-[4vh] ${fredoka.className}`}
+        className={`text-[14vw] leading-[1] md:text-8xl py-1 font-bold text-[#d98f8f] mb-[4svh] md:mb-[4svh] ${fredoka.className}`}
       >
         {id ? (
           <>
@@ -127,7 +127,7 @@ function SearchParamsContent() {
         )}
       </h1>
       <p
-        className={`text-[5vw] md:text-4xl max-w-5xl leading-relaxed text-[#aa9a7d] px-[5vw] mb-[4vh] md:mb-[4vh] ${poppins.className}`}
+        className={`text-[5vw] md:text-4xl max-w-5xl leading-relaxed text-[#aa9a7d] px-[5vw] mb-[4svh] md:mb-[4svh] ${poppins.className}`}
       >
         {id
           ? "Share this link with your potential valentine. We hope they say yes!"
@@ -190,7 +190,7 @@ function SearchParamsContent() {
       {!id && (
         <Link href="/form">
           <button
-            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[6vw] md:px-[60px] rounded-full whitespace-nowrap 
+            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2svh] md:py-8 px-[6vw] md:px-[60px] rounded-full whitespace-nowrap 
           z-30 relative cursor-pointer
           transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
           ${fredoka.className}`}
