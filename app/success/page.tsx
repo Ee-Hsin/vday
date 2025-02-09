@@ -99,7 +99,7 @@ function SearchParamsContent() {
       })
 
       if (analytics) {
-        logEvent(analytics, "link_copied", { button_name: "copy_link" });
+        logEvent(analytics, "link_copied", { url: cardUrl });
       }
     } catch (err) {
       console.error("Failed to copy:", err)
