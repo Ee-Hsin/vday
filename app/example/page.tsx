@@ -11,7 +11,7 @@ export default function Example() {
       imgCaption2="Your favorite meal"
       valentineName="Chaewon"
       senderName="Jordan"
-      message="I've made reservations at Nobu, I'll see you at 7:30 then, it's gonna be great!"
+      message="I've made reservations at Nobu for Friday. I'll see you at 7:30 then, it's gonna be great!"
     />
   );
 }
