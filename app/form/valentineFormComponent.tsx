@@ -125,25 +125,35 @@ export default function ValentineForm() {
     imageFile: File,
     compressionOptions: CompressionOptions
   ): Promise<File | null> {
+
+    // if (
+    //   imageFile.type === "image/heic" || 
+    //   imageFile.name.toLowerCase().endsWith(".heic") ||
+    //   imageFile.type === "image/heif" || 
+    //   imageFile.name.toLowerCase().endsWith(".heif")
+    // ) {
+    //   return imageFile;
+    // }
+
     try {
       let fileToCompress: File = imageFile
 
       // Convert HEIC to JPEG if needed
-      if (
-        imageFile.type === "image/heic" ||
-        imageFile.name.endsWith(".heic") ||
-        imageFile.type === "image/heif" ||
-        imageFile.name.endsWith(".heif")
-      ) {
-        const blob = await heic2any({ blob: imageFile, toType: "image/jpeg" })
-        fileToCompress = new File(
-          [blob as Blob],
-          imageFile.name.replace(/\.heic$/, ".jpg"),
-          {
-            type: "image/jpeg",
-          }
-        )
-      }
+      // if (
+      //   imageFile.type === "image/heic" ||
+      //   file.name.toLowerCase().endsWith(".heic") ||
+      //   imageFile.type === "image/heif" ||
+      //   file.name.toLowerCase().endsWith(".heif")
+      // ) {
+      //   const blob = await heic2any({ blob: imageFile, toType: "image/jpeg" })
+      //   fileToCompress = new File(
+      //     [blob as Blob],
+      //     imageFile.name.replace(/\.(heic|HEIC|heif|HEIF)$/, ".jpg"),
+      //     {
+      //       type: "image/jpeg",
+      //     }
+      //   )
+      // }
 
       // Compress the (converted) image
       const compressedImage = await imageCompression(
@@ -377,18 +387,32 @@ export default function ValentineForm() {
                           <div className="text-center">
                             <Input
                               type="file"
-                              accept="image/*, .heic, .heif"
+                              accept="image/jpeg,image/png,image/jpg"
                               onChange={async (e) => {
                                 const file = e.target.files?.[0] || null
                                 if (!file) return
 
                                 let previewUrl = null
 
+                                // Check file type
+                                const validTypes = ['image/jpeg', 'image/png', 'image/jpg']
+                                if (!validTypes.includes(file.type)) {
+                                  form.setError('image1', {
+                                    type: 'manual',
+                                    message: 'File type not supported. Please upload PNG or JPG only.'
+                                  })
+                                  e.target.value = '' // Reset input
+                                  return
+                                }
+
+                                // Clear error if file type is valid
+                                form.clearErrors('image1')
+
                                 if (
                                   file.type === "image/heic" ||
-                                  file.name.endsWith(".heic") ||
+                                  file.name.toLowerCase().endsWith(".heic") ||
                                   file.type === "image/heif" ||
-                                  file.name.endsWith(".heif")
+                                  file.name.toLowerCase().endsWith(".heif")
                                 ) {
                                   try {
                                     // Convert HEIC to JPEG
@@ -398,7 +422,7 @@ export default function ValentineForm() {
                                     })
                                     const convertedFile = new File(
                                       [blob as Blob],
-                                      file.name.replace(/\.heic$/, ".jpg"),
+                                      file.name.replace(/\.(heic|HEIC|heif|HEIF)$/, ".jpg"),
                                       {
                                         type: "image/jpeg",
                                       }
@@ -406,6 +430,8 @@ export default function ValentineForm() {
 
                                     previewUrl =
                                       URL.createObjectURL(convertedFile)
+                                    // onChange(file) // Pass the converted file instead of original
+                                    // setPreview1(previewUrl) // or setPreview2 for second image
                                   } catch (error) {
                                     console.error(
                                       "HEIC conversion failed:",
@@ -523,18 +549,32 @@ export default function ValentineForm() {
                           <div className="text-center">
                             <Input
                               type="file"
-                              accept="image/*, .heic, .heif"
+                              accept="image/jpeg,image/png,image/jpg"
                               onChange={async (e) => {
                                 const file = e.target.files?.[0] || null
                                 if (!file) return
 
                                 let previewUrl = null
 
+                                // Check file type
+                                const validTypes = ['image/jpeg', 'image/png', 'image/jpg']
+                                if (!validTypes.includes(file.type)) {
+                                  form.setError('image2', {
+                                    type: 'manual',
+                                    message: 'File type not supported. Please upload PNG or JPG only.'
+                                  })
+                                  e.target.value = '' // Reset input
+                                  return
+                                }
+
+                                // Clear error if file type is valid
+                                form.clearErrors('image2')
+
                                 if (
                                   file.type === "image/heic" ||
-                                  file.name.endsWith(".heic") ||
+                                  file.name.toLowerCase().endsWith(".heic") ||
                                   file.type === "image/heif" ||
-                                  file.name.endsWith(".heif")
+                                  file.name.toLowerCase().endsWith(".heif")
                                 ) {
                                   try {
                                     // Convert HEIC to JPEG
@@ -544,7 +584,7 @@ export default function ValentineForm() {
                                     })
                                     const convertedFile = new File(
                                       [blob as Blob],
-                                      file.name.replace(/\.heic$/, ".jpg"),
+                                      file.name.replace(/\.(heic|HEIC|heif|HEIF)$/, ".jpg"),
                                       {
                                         type: "image/jpeg",
                                       }
@@ -552,6 +592,8 @@ export default function ValentineForm() {
 
                                     previewUrl =
                                       URL.createObjectURL(convertedFile)
+                                    // onChange(convertedFile);
+                                    // setPreview2(previewUrl);
                                   } catch (error) {
                                     console.error(
                                       "HEIC conversion failed:",
