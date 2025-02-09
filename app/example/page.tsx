@@ -5,13 +5,13 @@ import ValentineProposal from "@/components/CardTemplate";
 export default function Example() {
   return (
     <ValentineProposal
-      imgUrl="/happy-couple.jpg"
-      imgCaption="Our first picture together"
-      imgUrl2="/first-date.jpg"
-      imgCaption2="Our first date"
-      valentineName="Jane Doe"
-      senderName="Paul Smith"
-      message="I'll see you at 7:30 then, I've already made reservations it's gonna be great!"
+      imgUrl="/chaewon_first_date.jpeg"
+      imgCaption="Our first date"
+      imgUrl2="/meal.jpg"
+      imgCaption2="Your favorite meal"
+      valentineName="Chaewon"
+      senderName="Jordan"
+      message="I've made reservations at Nobu, I'll see you at 7:30 then, it's gonna be great!"
     />
   );
 }
