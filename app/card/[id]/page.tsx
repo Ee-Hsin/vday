@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { analytics, db } from '@/lib/firebase'; // Your Firebase initialization
 import { doc, getDoc } from 'firebase/firestore'; // Import getFirestore
 import ValentineProposal from "@/components/CardTemplate";
+import LoadingScreen from "@/components/LoadingScreen"
 import { logEvent } from 'firebase/analytics';
 
 export default function CardPage() {
@@ -44,7 +45,7 @@ export default function CardPage() {
   }, [id]); // Re-run effect if 'id' changes
 
   if (loading) {
-    return <div>Loading card...</div>; // Display loading message
+    return <LoadingScreen />
   }
 
   if (error) {
