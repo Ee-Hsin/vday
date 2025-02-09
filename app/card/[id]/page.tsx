@@ -54,7 +54,7 @@ export default function CardPage() {
   }
 
   if (!cardData) { // Data could be null if there was an issue or the doc doesn't exist
-      return <div>No card data found.</div>;
+    return <ErrorScreen message={error} />
   }
 
   // Now you have the card data, display it!
