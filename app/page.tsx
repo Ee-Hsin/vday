@@ -1,110 +1,92 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { useMovingButton } from "../hooks/useMovingButton"
-import SuccessModal from "../components/SuccessModal"
-import HeartBackground from "../components/HeartBackground"
-import FramedImage from "../components/FramedImage"
-import BrokenHeart from "../components/BrokenHeart"
-import NiceHeart from "../components/NiceHeart"
+import Link from "next/link"
+import bg from "../assets/mofu pc transparent bigger.png"
+import bgMobile from "../assets/vday landing phone.png"
+import Image from "next/image"
+import { useState } from "react"
+import { Fredoka, Poppins } from "next/font/google"
+import HeartBackground from "@/components/HeartBackground"
+import ClickHeartEffect from "@/components/ClickHeartEffect"
 
-export default function ValentineProposal() {
-  const [showModal, setShowModal] = useState(false)
-  const [noClicked, setNoClicked] = useState(false)
-  const { buttonPosition, handleMouseMove } = useMovingButton()
+const fredoka = Fredoka({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+})
 
-  useEffect(() => {
-    if (noClicked) {
-      const timer = setTimeout(() => {
-        setNoClicked(false)
-      }, 2000)
-      return () => clearTimeout(timer)
-    }
-  }, [noClicked])
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400"],
+})
+
+export default function Page() {
+
+  const isClient = typeof window !== "undefined"
 
   return (
-    <div
-      className="min-h-screen bg-pink-100 flex flex-col items-center justify-center p-4 overflow-hidden relative"
-      onMouseMove={handleMouseMove}
-    >
+    <div className="h-screen relative bg-[#ffeded] overflow-hidden">
       <HeartBackground />
-      <FramedImage
-        src="/jeff_and_jim.svg?height=150&width=150"
-        alt="Memory 1"
-        caption="Jeff and Jim"
-        className="absolute top-10 left-10 transform -rotate-6"
-      />
-      <FramedImage
-        src="/flowers_color.svg?height=150&width=150"
-        alt="Memory 2"
-        caption="Our first date"
-        className="absolute bottom-10 right-10 transform rotate-6"
-      />
-      <h1 className="text-4xl font-bold text-pink-600 mb-8 text-center flex items-center justify-center">
-        <NiceHeart className="mr-2 text-pink-600" size={40} /> Will you be my Valentine?{" "}
-        <NiceHeart className="ml-2 text-pink-600" size={40} />
-      </h1>
-      <div className="flex items-center space-x-4 relative">
-        <Button className="bg-pink-500 hover:bg-pink-600 text-white" onClick={() => setShowModal(true)}>
-          Yes
-        </Button>
-        <Button className="bg-pink-500 hover:bg-pink-600 text-white" onClick={() => setShowModal(true)}>
-          Also Yes
-        </Button>
-        <motion.div
-          className="relative"
-          style={{
-            position: "absolute",
-            left: `calc(100% + ${buttonPosition.x}px)`,
-            top: `${buttonPosition.y}px`,
-          }}
-          animate={{ x: buttonPosition.x, y: buttonPosition.y }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      <ClickHeartEffect />
+      <div className="relative z-10 mt-[5vh] md:mt-[80px] px-[5vw] md:px-0 md:ml-[100px] w-full md:w-auto text-center md:text-left">
+        <h1
+          className={`text-[12vw] md:text-9xl font-bold mb-[0vh] text-[#d98f8f] ${fredoka.className}`}
         >
-          <Button className="bg-gray-300 text-gray-700 relative overflow-visible" onClick={() => setNoClicked(true)}>
-            <AnimatePresence mode="wait">
-              {noClicked ? (
-                <motion.div
-                  key="broken-heart"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <BrokenHeart size={24} color="rgba(255, 105, 180, 0.7)" />
-                </motion.div>
-              ) : (
-                <motion.span
-                  key="no-text"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  No
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </Button>
-          <AnimatePresence>
-            {noClicked && (
-              <motion.span
-                className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 whitespace-nowrap bg-pink-100 px-2 py-1 rounded text-sm"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.3 }}
-              >
-                erm, can you click yes instead?
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </motion.div>
+          Valentine&apos;s Day
+        </h1>
+        <h2
+          className={`text-[10vw] md:text-7xl font-bold mb-[3.5vh] text-[#d98f8f] leading-[0.9] md:leading-normal ${fredoka.className}`}
+        >
+          Personal Website Generator
+        </h2>
+        <p
+          className={`text-[5vw] md:text-4xl max-w-5xl leading-relaxed text-[#aa9a7d] ${poppins.className}`}
+        >
+          <span>Your potential valentine deserves more than a DM.</span>
+          <span className="inline md:hidden">&nbsp;</span>
+          <br className="hidden md:block" />
+          <span>Enter details, add pics, and get a link.</span>
+          <span className="inline md:hidden">&nbsp;</span>
+          <br className="hidden md:block" />
+          <span>No coding required.</span>
+        </p>
       </div>
-      <SuccessModal isOpen={showModal} onClose={() => setShowModal(false)} />
+
+      <div className="relative z-10 mt-[5vh] md:mt-[7.5vh] px-[5vw] flex gap-[4vw]">
+        <Link href="/form">
+          <button
+            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap 
+            z-30 relative cursor-pointer
+            transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
+            ${fredoka.className}`}
+          >
+            Create Website
+          </button>
+        </Link>
+
+        <Link href="/example" target="_blank" rel="noopener noreferrer">
+          <button
+            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap
+            z-30 relative cursor-pointer
+            transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
+            ${fredoka.className}`}
+          >
+            See Example
+          </button>
+        </Link>
+      </div>
+
+      <Image
+        src={bg}
+        alt="Background"
+        className="hidden md:block absolute bottom-0 right-0 w-screen h-auto object-contain z-0"
+        priority
+      />
+      <Image
+        src={bgMobile}
+        alt="Background"
+        className="md:hidden absolute bottom-0 right-0 w-full h-auto object-contain z-0"
+        priority
+      />
     </div>
   )
 }
-

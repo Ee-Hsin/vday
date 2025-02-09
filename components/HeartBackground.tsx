@@ -66,7 +66,7 @@ export default function HeartBackground() {
             transform: `rotate(${heart.rotation}deg)`,
           }}
         >
-          <SvgHeart size={heart.size} color="rgba(255, 105, 180, 0.7)" />
+          <SvgHeart size={heart.size} color="rgba(217, 143, 143, 0.7)" />
         </div>
       ))}
     </div>
