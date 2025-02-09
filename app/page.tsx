@@ -36,7 +36,7 @@ export default function Page() {
         <h2
           className={`text-[10vw] md:text-7xl font-bold mb-[3.5svh] text-[#d98f8f] leading-[0.9] md:leading-normal ${fredoka.className}`}
         >
-          Personal Website Generator
+          Digital Card Generator
         </h2>
         <p
           className={`text-[5vw] md:text-4xl max-w-5xl leading-relaxed text-[#aa9a7d] ${poppins.className}`}
@@ -51,7 +51,7 @@ export default function Page() {
         </p>
       </div>
 
-      <div className="relative z-10 mt-[5svh] md:mt-[7.5svh] px-[5vw] flex gap-[4vw]">
+      <div className="relative z-10 mt-[5svh] md:mt-[7.5svh] px-[5vw] flex gap-[4vw] md:justify-normal justify-center">
         <Link href="/form">
           <button
             className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2svh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap 
@@ -59,7 +59,7 @@ export default function Page() {
             transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
             ${fredoka.className}`}
           >
-            Create Website
+            Create Card
           </button>
         </Link>
 
