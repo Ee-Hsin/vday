@@ -172,7 +172,7 @@ export default function ValentineProposal({
               />
             </div>
             <div
-              className={`${nanumPen.className} text-white text-5xl md:text-7xl space-y-2`}
+              className={`${nanumPen.className} text-white ${valentineName.length > 15 || senderName.length > 15 ? 'text-3xl md:text-6xl' : 'text-5xl md:text-7xl'} space-y-2 px-6`}
             >
               <p>To: {valentineName}</p>
               <p>From: {senderName}</p>
@@ -187,7 +187,7 @@ export default function ValentineProposal({
           bg-[#ffffff] rounded-lg shadow-lg p-8 flex flex-col items-center z-10 justify-between"
       >
         <h1
-          className={`${fredoka.className} text-3xl md:text-4xl font-bold text-[#cd7b7b] text-center flex items-center justify-center `}
+          className={`${fredoka.className} text-3xl md:text-4xl font-bold text-[#cd7b7b] text-center flex items-center justify-center`}
         >
           Hi {valentineName}, will you be my Valentine?
         </h1>
