@@ -23,8 +23,8 @@ We’ll generate a personalized card just for them, complete with its own sharea
 
 ## 🚨 Tech Stack
 
-- **Frontend**: [Next.js](https://nextjs.org/)  
-- **Backend & Hosting**: [Firebase](https://firebase.google.com/)  
+- **Frontend**: Next.js
+- **Backend & Hosting**: Firebase
 - **Styling**: Tailwind CSS  
 - **Image Storage**: Firebase Storage  
 - **Deployment**: Vercel  
