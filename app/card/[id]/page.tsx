@@ -50,11 +50,11 @@ export default function CardPage() {
   }
 
   if (error) {
-    return <ErrorScreen message={error || "An unknown error occurred"} />
+    return <ErrorScreen message={error} />
   }
 
   if (!cardData) { // Data could be null if there was an issue or the doc doesn't exist
-    return <ErrorScreen message={error || "An unknown error occurred"} />
+    return <ErrorScreen message={error} />
   }
 
   // Now you have the card data, display it!
