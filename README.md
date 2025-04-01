@@ -3,7 +3,10 @@
 A customizable digital Valentine’s Day card for when a DM just isn’t enough.  
 Built with ❤️ by [Brian Zhang](https://github.com/brianzhangdev), [Patrick Huang](https://github.com/patrickxhuang), and [Jordan Kok](https://github.com/Ee-Hsin).
 
+![image](https://github.com/user-attachments/assets/ee02e6c3-a26f-43c2-9206-b10bb521619c)
+![image](https://github.com/user-attachments/assets/2e1dd4e7-bad2-474b-9a0c-3c3edccc5e00)
 ![image](https://github.com/user-attachments/assets/33c5baf5-c33c-4212-b307-345a97393868)
+
 
 ## ✨ What is this?
 
