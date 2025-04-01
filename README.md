@@ -1,9 +1,9 @@
 # 💘 valentineproposal.com 💘
 
 A customizable digital Valentine’s Day card for when a DM just isn’t enough.  
-Built with ❤️ by [Brian Zhang](https://github.com/brianzhangdev), [Patrick Huang](https://github.com/patrickxhuang), and [Your Name].
+Built with ❤️ by [Brian Zhang](https://github.com/brianzhangdev), [Patrick Huang](https://github.com/patrickxhuang), and [Jordan Kok](https://github.com/Ee-Hsin).
 
-![valentineproposal.com preview](public/preview.png) <!-- (optional: add a screenshot to show off the UI!) -->
+![image](https://github.com/user-attachments/assets/33c5baf5-c33c-4212-b307-345a97393868)
 
 ## ✨ What is this?
 
