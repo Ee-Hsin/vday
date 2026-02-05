@@ -8,7 +8,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -127,36 +126,10 @@ export default function ValentineForm() {
     compressionOptions: CompressionOptions
   ): Promise<File | null> {
 
-    // if (
-    //   imageFile.type === "image/heic" || 
-    //   imageFile.name.toLowerCase().endsWith(".heic") ||
-    //   imageFile.type === "image/heif" || 
-    //   imageFile.name.toLowerCase().endsWith(".heif")
-    // ) {
-    //   return imageFile;
-    // }
-
     try {
       let fileToCompress: File = imageFile
 
-      // Convert HEIC to JPEG if needed
-      // if (
-      //   imageFile.type === "image/heic" ||
-      //   file.name.toLowerCase().endsWith(".heic") ||
-      //   imageFile.type === "image/heif" ||
-      //   file.name.toLowerCase().endsWith(".heif")
-      // ) {
-      //   const blob = await heic2any({ blob: imageFile, toType: "image/jpeg" })
-      //   fileToCompress = new File(
-      //     [blob as Blob],
-      //     imageFile.name.replace(/\.(heic|HEIC|heif|HEIF)$/, ".jpg"),
-      //     {
-      //       type: "image/jpeg",
-      //     }
-      //   )
-      // }
-
-      // Compress the (converted) image
+      // Compress the image
       const compressedImage = await imageCompression(
         fileToCompress,
         compressionOptions

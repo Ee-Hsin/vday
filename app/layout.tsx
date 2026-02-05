@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import "./globals.css"
-import Analytics from "@/components/Analytics"
+import Analytics from "@/components/Analytics" //firebase analytics
+import { Analytics as NextJSAnalytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   title: "Valentine Proposal",
@@ -37,7 +39,10 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body>
-        <Analytics /> {children}
+        <Analytics />
+        {children}
+        <NextJSAnalytics />
+        <SpeedInsights />
       </body>
     </html>
   )

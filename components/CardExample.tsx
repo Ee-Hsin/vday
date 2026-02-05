@@ -6,8 +6,6 @@ import SuccessModal from "../components/SuccessModal"
 import HeartBackground from "../components/HeartBackground"
 import FramedImage from "../components/FramedImage"
 import BrokenHeart from "../components/BrokenHeart"
-import NiceHeart from "../components/NiceHeart"
-// import ClickHeartEffect from "@/components/ClickHeartEffect"
 import { Fredoka, Poppins, Nanum_Pen_Script } from "next/font/google"
 import { useIsMobile } from "@/hooks/use-mobile" // Add this import
 import { YesButton } from "../components/YesButton"
@@ -30,6 +28,7 @@ const poppins = Poppins({
 const nanumPen = Nanum_Pen_Script({
   weight: "400",
   subsets: ["latin"],
+  adjustFontFallback: false,
 })
 
 interface ValentineProposalProps {
