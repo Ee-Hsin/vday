@@ -62,7 +62,7 @@ const formSchema = z
     {
       message: "You forgot to write a caption for your first image!",
       path: ["caption1"],
-    }
+    },
   )
   .refine((data) => (data.caption1 ? !!data.image1 : true), {
     message:
@@ -74,7 +74,7 @@ const formSchema = z
     {
       message: "You forgot to write a caption for your second image!",
       path: ["caption2"],
-    }
+    },
   )
   .refine((data) => (data.caption2 ? !!data.image2 : true), {
     message:
@@ -123,16 +123,15 @@ export default function ValentineForm() {
 
   async function handleImageCompression(
     imageFile: File,
-    compressionOptions: CompressionOptions
+    compressionOptions: CompressionOptions,
   ): Promise<File | null> {
-
     try {
       let fileToCompress: File = imageFile
 
       // Compress the image
       const compressedImage = await imageCompression(
         fileToCompress,
-        compressionOptions
+        compressionOptions,
       )
       return compressedImage
     } catch (error) {
@@ -150,16 +149,6 @@ export default function ValentineForm() {
 
     console.log(values)
     try {
-      const docRef = await addDoc(collection(db, "valentineMessages"), {
-        senderName: values.senderName,
-        recipientName: values.recipientName,
-        message: values.message,
-        caption1: values.caption1 || null,
-        caption2: values.caption2 || null,
-        selectedStamp: values.selectedStamp,
-        timestamp: new Date(),
-      })
-
       let image1URL = null
       let image2URL = null
 
@@ -172,13 +161,13 @@ export default function ValentineForm() {
       if (values.image1 && values.caption1) {
         const compressedImage = await handleImageCompression(
           values.image1,
-          compressionOptions
+          compressionOptions,
         )
 
         if (compressedImage) {
           image1URL = await uploadImage(
             compressedImage,
-            `valentines/${docRef.id}/image1-${Date.now()}`
+            `valentines/${values.senderName + Date.now()}/image1-${Date.now()}`,
           )
         }
       }
@@ -186,25 +175,34 @@ export default function ValentineForm() {
       if (values.image2 && values.caption2) {
         const compressedImage = await handleImageCompression(
           values.image2,
-          compressionOptions
+          compressionOptions,
         )
 
         if (compressedImage) {
           image2URL = await uploadImage(
             compressedImage,
-            `valentines/${docRef.id}/image2-${Date.now()}`
+            `valentines/${values.senderName + Date.now()}/image2-${Date.now()}`,
           )
         }
       }
 
-      await updateDoc(docRef, {
+      const docRef = await addDoc(collection(db, "valentineMessages"), {
+        senderName: values.senderName,
+        recipientName: values.recipientName,
+        message: values.message,
+        caption1: values.caption1 || null,
+        caption2: values.caption2 || null,
+        selectedStamp: values.selectedStamp,
         image1URL,
         image2URL,
+        timestamp: new Date(),
       })
 
       if (analytics) {
         console.log("form_submitted_successful", { button_name: "submit" })
-        logEvent(analytics, "form_submitted_successful", { button_name: "submit" })
+        logEvent(analytics, "form_submitted_successful", {
+          button_name: "submit",
+        })
       }
 
       form.reset()
@@ -356,7 +354,9 @@ export default function ValentineForm() {
                     control={form.control}
                     name="image1"
                     render={({ field: { onChange, ...field } }) => (
-                      <div className="bg-white p-3 pb-0 rounded-lg shadow-md w-full h-full grid grid-rows-[auto_1fr_auto] gap-2"> {/* Polaroid frame */}
+                      <div className="bg-white p-3 pb-0 rounded-lg shadow-md w-full h-full grid grid-rows-[auto_1fr_auto] gap-2">
+                        {" "}
+                        {/* Polaroid frame */}
                         <FormItem className="bg-[#D9D9D9] w-full aspect-square rounded-md relative overflow-hidden">
                           <div className="w-full h-full aspect-square">
                             <Image
@@ -377,22 +377,29 @@ export default function ValentineForm() {
                                     let previewUrl = null
 
                                     // Check file type
-                                    const validTypes = ['image/jpeg', 'image/png', 'image/jpg']
+                                    const validTypes = [
+                                      "image/jpeg",
+                                      "image/png",
+                                      "image/jpg",
+                                    ]
                                     if (!validTypes.includes(file.type)) {
-                                      form.setError('image1', {
-                                        type: 'manual',
-                                        message: 'File type not supported. Please upload PNG or JPG only.'
+                                      form.setError("image1", {
+                                        type: "manual",
+                                        message:
+                                          "File type not supported. Please upload PNG or JPG only.",
                                       })
-                                      e.target.value = '' // Reset input
+                                      e.target.value = "" // Reset input
                                       return
                                     }
 
                                     // Clear error if file type is valid
-                                    form.clearErrors('image1')
+                                    form.clearErrors("image1")
 
                                     if (
                                       file.type === "image/heic" ||
-                                      file.name.toLowerCase().endsWith(".heic") ||
+                                      file.name
+                                        .toLowerCase()
+                                        .endsWith(".heic") ||
                                       file.type === "image/heif" ||
                                       file.name.toLowerCase().endsWith(".heif")
                                     ) {
@@ -404,10 +411,13 @@ export default function ValentineForm() {
                                         })
                                         const convertedFile = new File(
                                           [blob as Blob],
-                                          file.name.replace(/\.(heic|HEIC|heif|HEIF)$/, ".jpg"),
+                                          file.name.replace(
+                                            /\.(heic|HEIC|heif|HEIF)$/,
+                                            ".jpg",
+                                          ),
                                           {
                                             type: "image/jpeg",
-                                          }
+                                          },
                                         )
 
                                         previewUrl =
@@ -417,7 +427,7 @@ export default function ValentineForm() {
                                       } catch (error) {
                                         console.error(
                                           "HEIC conversion failed:",
-                                          error
+                                          error,
                                         )
                                       }
                                     } else {
@@ -466,7 +476,7 @@ export default function ValentineForm() {
                         </FormItem>
                         <div className="flex items-center justify-center">
                           <span className="text-gray-400 text-sm text-center">
-                            Photo 1 <br className="md:hidden"/> Upload
+                            Photo 1 <br className="md:hidden" /> Upload
                           </span>
                         </div>
                       </div>
@@ -554,22 +564,29 @@ export default function ValentineForm() {
                                     let previewUrl = null
 
                                     // Check file type
-                                    const validTypes = ['image/jpeg', 'image/png', 'image/jpg']
+                                    const validTypes = [
+                                      "image/jpeg",
+                                      "image/png",
+                                      "image/jpg",
+                                    ]
                                     if (!validTypes.includes(file.type)) {
-                                      form.setError('image2', {
-                                        type: 'manual',
-                                        message: 'File type not supported. Please upload PNG or JPG only.'
+                                      form.setError("image2", {
+                                        type: "manual",
+                                        message:
+                                          "File type not supported. Please upload PNG or JPG only.",
                                       })
-                                      e.target.value = '' // Reset input
+                                      e.target.value = "" // Reset input
                                       return
                                     }
 
                                     // Clear error if file type is valid
-                                    form.clearErrors('image2')
+                                    form.clearErrors("image2")
 
                                     if (
                                       file.type === "image/heic" ||
-                                      file.name.toLowerCase().endsWith(".heic") ||
+                                      file.name
+                                        .toLowerCase()
+                                        .endsWith(".heic") ||
                                       file.type === "image/heif" ||
                                       file.name.toLowerCase().endsWith(".heif")
                                     ) {
@@ -581,10 +598,13 @@ export default function ValentineForm() {
                                         })
                                         const convertedFile = new File(
                                           [blob as Blob],
-                                          file.name.replace(/\.(heic|HEIC|heif|HEIF)$/, ".jpg"),
+                                          file.name.replace(
+                                            /\.(heic|HEIC|heif|HEIF)$/,
+                                            ".jpg",
+                                          ),
                                           {
                                             type: "image/jpeg",
-                                          }
+                                          },
                                         )
 
                                         previewUrl =
@@ -594,7 +614,7 @@ export default function ValentineForm() {
                                       } catch (error) {
                                         console.error(
                                           "HEIC conversion failed:",
-                                          error
+                                          error,
                                         )
                                       }
                                     } else {
@@ -643,7 +663,7 @@ export default function ValentineForm() {
                         </FormItem>
                         <div className="flex items-center justify-center">
                           <span className="text-gray-400 text-sm text-center">
-                            Photo 2 <br className="md:hidden"/> Upload
+                            Photo 2 <br className="md:hidden" /> Upload
                           </span>
                         </div>
                       </div>
