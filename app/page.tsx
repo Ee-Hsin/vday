@@ -9,6 +9,8 @@ import { Fredoka, Poppins } from "next/font/google"
 import HeartBackground from "@/components/HeartBackground"
 import ClickHeartEffect from "@/components/ClickHeartEffect"
 import ExampleModal from "@/components/ExampleModal"
+import { analytics } from "@/lib/firebase"
+import { logEvent } from "firebase/analytics"
 
 const fredoka = Fredoka({
   subsets: ["latin"],
@@ -21,9 +23,14 @@ const poppins = Poppins({
 })
 
 export default function Page() {
-
-  const isClient = typeof window !== "undefined"
   const [isExampleOpen, setIsExampleOpen] = useState(false)
+
+  const openExampleModal = () => {
+    if (analytics) {
+      logEvent(analytics, "example_modal_opened")
+    }
+    setIsExampleOpen(true)
+  }
 
   return (
     <div className="h-svh md:h-screen relative bg-[#ffeded] overflow-hidden">
@@ -66,7 +73,7 @@ export default function Page() {
         </Link>
 
         <button
-          onClick={() => setIsExampleOpen(true)}
+          onClick={openExampleModal}
           className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2svh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap 
           z-30 relative cursor-pointer
           transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
@@ -76,7 +83,7 @@ export default function Page() {
         </button>
       </div>
 
-      <ExampleModal 
+      <ExampleModal
         isOpen={isExampleOpen}
         onClose={() => setIsExampleOpen(false)}
       />
