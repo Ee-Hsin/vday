@@ -147,7 +147,6 @@ export default function ValentineForm() {
       logEvent(analytics, "form_submitted_start", { button_name: "submit" })
     }
 
-    console.log(values)
     try {
       let image1URL = null
       let image2URL = null
@@ -199,7 +198,6 @@ export default function ValentineForm() {
       })
 
       if (analytics) {
-        console.log("form_submitted_successful", { button_name: "submit" })
         logEvent(analytics, "form_submitted_successful", {
           button_name: "submit",
         })

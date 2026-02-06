@@ -47,13 +47,13 @@ if (typeof window !== "undefined") {
         provider: new ReCaptchaV3Provider(siteKey),
         isTokenAutoRefreshEnabled: true
       });
-      console.log("App Check initialized successfully.");
+      // console.log("App Check initialized successfully.");
     } else {
-      console.warn("App Check skipped: NEXT_PUBLIC_RECAPTCHA_SITE_KEY is missing.");
+      // console.warn("App Check skipped: NEXT_PUBLIC_RECAPTCHA_SITE_KEY is missing.");
     }
   } catch (err) {
     // for during development hot-reloads, so we just ignore it
-    console.log("App Check already initialized.");
+    // console.log("App Check already initialized.");
   }
 }
 
