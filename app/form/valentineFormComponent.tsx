@@ -21,7 +21,6 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { MdHome } from "react-icons/md"
-import { Fredoka, Poppins } from "next/font/google"
 import mofuFlower from "../../assets/mofu flower crop.png"
 import mofuHeart from "../../assets/mofu heart crop.png"
 import imageCompression from "browser-image-compression"
@@ -35,16 +34,6 @@ import HeartBackground from "@/components/HeartBackground"
 import heic2any from "heic2any"
 import { logEvent } from "firebase/analytics"
 import { analytics } from "@/lib/firebase"
-
-const fredoka = Fredoka({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-})
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400"],
-})
 
 const formSchema = z
   .object({
@@ -218,7 +207,7 @@ export default function ValentineForm() {
 
   return (
     <div
-      className={`min-h-svh flex items-center justify-center bg-[#ffeded] ${poppins.className}`}
+      className={`min-h-svh flex items-center justify-center bg-[#ffeded] font-poppins`}
     >
       <HeartBackground />
       <ClickHeartEffect />
@@ -287,7 +276,7 @@ export default function ValentineForm() {
                 {/* Stamp Selection */}
                 <div className="space-y-2">
                   <h3
-                    className={`text-white text-xl font-semibold ${fredoka.className}`}
+                    className={`text-white text-xl font-semibold font-fredoka`}
                   >
                     Select Stamp
                   </h3>
@@ -674,7 +663,7 @@ export default function ValentineForm() {
             <div className="flex justify-center pb-6 md:pb-0">
               <Button
                 type="submit"
-                className={`bg-[#E5A4A4] hover:bg-[#d98f8f] text-white text-xl px-8 py-2 rounded-3xl h-[60px]  ${fredoka.className}`}
+                className={`bg-[#E5A4A4] hover:bg-[#d98f8f] text-white text-xl px-8 py-2 rounded-3xl h-[60px]  font-fredoka`}
                 disabled={loading}
               >
                 {loading ? "Submitting..." : "Generate Website"}

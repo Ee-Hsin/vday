@@ -1,17 +1,5 @@
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog"
 import Image from "next/image"
-import { Fredoka, Poppins } from "next/font/google"
-
-const fredoka = Fredoka({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-})
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400"],
-})
-
 interface ImageModalProps {
   isOpen: boolean
   onClose: () => void
@@ -34,7 +22,7 @@ export default function ImageModal({ isOpen, onClose, src, alt, caption }: Image
           />
         </div>
         <div className="overflow-y-auto w-full max-h-[20svh] md:max-h-[30svh]">
-          <p className={`${poppins.className} text-center text-pink-800`}>
+          <p className={`font-poppins text-center text-pink-800`}>
             {caption}
           </p>
         </div>

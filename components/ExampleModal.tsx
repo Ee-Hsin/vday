@@ -1,15 +1,9 @@
 "use client"
 
-import { Fredoka } from "next/font/google"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Minus, Maximize2, Minimize2, RotateCw, Search } from "lucide-react"
 import ValentineProposal from "@/components/CardExample"
 import { useState } from "react"
-
-const fredoka = Fredoka({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-})
 
 interface ExampleModalProps {
   isOpen: boolean
@@ -47,7 +41,7 @@ export default function ExampleModal({ isOpen, onClose }: ExampleModalProps) {
             exit={{ scale: 0.95, opacity: 0 }}
           >
             {/* Title Bar */}
-            <div className={`${fredoka.className} h-10 bg-[#d98f8f] flex items-center justify-between px-4 flex-shrink-0 gap-4`}>
+            <div className={`font-fredoka h-10 bg-[#d98f8f] flex items-center justify-between px-4 flex-shrink-0 gap-4`}>
               <button 
                 onClick={handleReload}
                 className="text-white hover:text-pink-200"

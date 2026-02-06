@@ -1,7 +1,6 @@
 import Image from "next/image"
 import { useState } from "react"
 import ImageModal from "./ImageModal"
-import { Fredoka, Poppins } from "next/font/google"
 import stamp1 from "@/assets/stamp 1.png"
 
 interface FramedImageProps {
@@ -10,16 +9,6 @@ interface FramedImageProps {
   caption: string
   className?: string
 }
-
-const fredoka = Fredoka({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-})
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400"],
-})
 
 export default function FramedImage({
   src,
@@ -62,7 +51,7 @@ export default function FramedImage({
           <p
             className={`
             text-center text-sm mt-2 text-pink-800
-            ${poppins.className}
+            font-poppins
             line-clamp-3
           `}
           >

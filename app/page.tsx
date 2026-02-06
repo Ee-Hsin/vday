@@ -5,22 +5,11 @@ import bg from "../assets/mofu pc transparent bigger.png"
 import bgMobile from "../assets/vday landing phone new.png"
 import Image from "next/image"
 import { useState } from "react"
-import { Fredoka, Poppins } from "next/font/google"
 import HeartBackground from "@/components/HeartBackground"
 import ClickHeartEffect from "@/components/ClickHeartEffect"
 import ExampleModal from "@/components/ExampleModal"
 import { analytics } from "@/lib/firebase"
 import { logEvent } from "firebase/analytics"
-
-const fredoka = Fredoka({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-})
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400"],
-})
 
 export default function Page() {
   const [isExampleOpen, setIsExampleOpen] = useState(false)
@@ -38,17 +27,17 @@ export default function Page() {
       <ClickHeartEffect />
       <div className="relative z-10 mt-[5svh] md:mt-[65px] px-[5vw] md:px-0 md:ml-[80px] w-full md:w-auto text-center md:text-left">
         <h1
-          className={`text-[12vw] md:text-8xl font-bold mb-[0svh] text-[#d98f8f] ${fredoka.className}`}
+          className={`text-[12vw] md:text-8xl font-bold mb-[0svh] text-[#d98f8f] font-fredoka`}
         >
           Valentine&apos;s Day
         </h1>
         <h2
-          className={`text-[10vw] md:text-7xl font-bold mb-[3.5svh] text-[#d98f8f] leading-[0.9] md:leading-normal ${fredoka.className}`}
+          className={`text-[10vw] md:text-7xl font-bold mb-[3.5svh] text-[#d98f8f] leading-[0.9] md:leading-normal font-fredoka`}
         >
           Digital Card Generator
         </h2>
         <p
-          className={`text-[5vw] md:text-3xl max-w-3xl leading-relaxed text-[#aa9a7d] ${poppins.className}`}
+          className={`text-[5vw] md:text-3xl max-w-3xl leading-relaxed text-[#aa9a7d] font-poppins`}
         >
           <span>Your potential valentine deserves more than a DM.</span>
           <span className="inline md:hidden">&nbsp;</span>
@@ -66,7 +55,7 @@ export default function Page() {
             className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2svh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap 
             z-30 relative cursor-pointer
             transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
-            ${fredoka.className}`}
+            font-fredoka`}
           >
             Create Card
           </button>
@@ -77,7 +66,7 @@ export default function Page() {
           className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2svh] md:py-8 px-[5vw] md:px-[60px] rounded-full whitespace-nowrap 
           z-30 relative cursor-pointer
           transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
-          ${fredoka.className}`}
+          font-fredoka`}
         >
           See Example
         </button>
