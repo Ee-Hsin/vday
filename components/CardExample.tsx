@@ -6,7 +6,6 @@ import SuccessModal from "../components/SuccessModal"
 import HeartBackground from "../components/HeartBackground"
 import FramedImage from "../components/FramedImage"
 import BrokenHeart from "../components/BrokenHeart"
-import { Fredoka, Poppins, Nanum_Pen_Script } from "next/font/google"
 import { useIsMobile } from "@/hooks/use-mobile" // Add this import
 import { YesButton } from "../components/YesButton"
 import stamp1 from "@/assets/stamp 1.png"
@@ -15,21 +14,6 @@ import stamp3 from "@/assets/stamp 3.png"
 import stampFrame from "@/assets/square stamp frame.png"
 import Image from "next/image"
 
-const fredoka = Fredoka({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-})
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400"],
-})
-
-const nanumPen = Nanum_Pen_Script({
-  weight: "400",
-  subsets: ["latin"],
-  adjustFontFallback: false,
-})
 
 interface ValentineProposalProps {
   imgUrl: string
@@ -171,7 +155,7 @@ export default function ValentineProposal({
               />
             </div>
             <div
-              className={`${nanumPen.className} text-white text-5xl md:text-7xl space-y-2`}
+              className={`font-nanum text-white text-5xl md:text-7xl space-y-2`}
             >
               <p>To: {valentineName}</p>
               <p>From: {senderName}</p>
@@ -186,7 +170,7 @@ export default function ValentineProposal({
           bg-[#ffffff] rounded-lg shadow-lg p-8 flex flex-col items-center z-10 justify-between"
       >
         <h1
-          className={`${fredoka.className} text-3xl md:text-4xl font-bold text-[#cd7b7b] text-center flex items-center justify-center `}
+          className={`font-fredoka text-3xl md:text-4xl font-bold text-[#cd7b7b] text-center flex items-center justify-center `}
         >
           Hi {valentineName}, will you be my Valentine?
         </h1>
@@ -220,7 +204,7 @@ export default function ValentineProposal({
 
         <div className="flex items-center space-x-5 relative">
           <Button
-            className={`${fredoka.className} bg-[#d98f8f] hover:bg-[#a55c5c] text-white w-[70px] font-medium rounded-xl text-lg -ml-[95px] shadow-md`}
+            className={`font-fredoka bg-[#d98f8f] hover:bg-[#a55c5c] text-white w-[70px] font-medium rounded-xl text-lg -ml-[95px] shadow-md`}
             onClick={handleYesClick}
           >
             Yes
@@ -244,7 +228,7 @@ export default function ValentineProposal({
             }
           >
             <Button
-              className={`${fredoka.className} bg-gray-300 hover:bg-gray-400 text-gray-700 w-[70px] font-medium rounded-xl text-lg relative shadow-md overflow-visible`}
+              className={`font-fredoka bg-gray-300 hover:bg-gray-400 text-gray-700 w-[70px] font-medium rounded-xl text-lg relative shadow-md overflow-visible`}
               onClick={handleNoClick}
             >
               <AnimatePresence mode="wait">
@@ -275,7 +259,7 @@ export default function ValentineProposal({
               {noClicked && (
                 <motion.span
                   className={`
-                      ${poppins.className} 
+                      font-poppins 
                       absolute top-full left-1 
                       transform -translate-x-1/2 mt-2 
                       bg-[#efcdd0] text-pink-800 

@@ -4,7 +4,6 @@ import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Suspense } from "react" // Import Suspense
 import Image from "next/image"
-import { Fredoka, Poppins } from "next/font/google"
 import HeartBackground from "@/components/HeartBackground"
 import ClickHeartEffect from "@/components/ClickHeartEffect"
 import pcBg from "@/assets/mofu yay pc.png"
@@ -15,16 +14,6 @@ import { IoCopy } from "react-icons/io5"
 import toast, { Toaster } from "react-hot-toast"
 import { logEvent } from "firebase/analytics";
 import { analytics } from "@/lib/firebase"; 
-
-const fredoka = Fredoka({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-})
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400"],
-})
 
 function SuccessPage() {
   return (
@@ -41,7 +30,7 @@ function SuccessPage() {
 
       {/* Content */}
 
-      <Suspense fallback={<p className={poppins.className}>Loading...</p>}>
+      <Suspense fallback={<p className="font-poppins">Loading...</p>}>
         <SearchParamsContent />
       </Suspense>
 
@@ -90,7 +79,7 @@ function SearchParamsContent() {
         style: {
           background: "#F5E6E6",
           color: "#d98f8f",
-          fontFamily: fredoka.style.fontFamily,
+          fontFamily: "var(--font-fredoka)",
         },
         iconTheme: {
           primary: "#d98f8f",
@@ -109,7 +98,7 @@ function SearchParamsContent() {
   return (
     <div className="relative z-10 mt-[5svh] md:mt-[80px] md:ml-[5vw] text-center md:text-center md:w-[46vw]">
       <h1
-        className={`text-[14vw] leading-[1] md:text-8xl py-1 font-bold text-[#d98f8f] mb-[4svh] md:mb-[4svh] ${fredoka.className}`}
+        className={`text-[14vw] leading-[1] md:text-8xl py-1 font-bold text-[#d98f8f] mb-[4svh] md:mb-[4svh] font-fredoka`}
       >
         {id ? (
           <>
@@ -127,7 +116,7 @@ function SearchParamsContent() {
         )}
       </h1>
       <p
-        className={`text-[5vw] md:text-4xl max-w-5xl leading-relaxed text-[#aa9a7d] px-[5vw] mb-[4svh] md:mb-[4svh] ${poppins.className}`}
+        className={`text-[5vw] md:text-4xl max-w-5xl leading-relaxed text-[#aa9a7d] px-[5vw] mb-[4svh] md:mb-[4svh] font-poppins`}
       >
         {id
           ? "Share this link with your potential valentine. We hope they say yes!"
@@ -157,43 +146,13 @@ function SearchParamsContent() {
         </div>
       )}
 
-      {/* {id && (
-        <div className="flex gap-[4vw] justify-center md:hidden">
-          <Link
-            href={`/card/${id}`}
-            prefetch
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <button
-              className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[6vw] md:px-[60px] rounded-full whitespace-nowrap 
-          z-30 relative cursor-pointer
-          transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
-          ${fredoka.className}`}
-            >
-              Visit Site
-            </button>
-          </Link>
-
-          <button
-            onClick={copyToClipboard}
-            className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2vh] md:py-8 px-[6vw] md:px-[60px] rounded-full whitespace-nowrap 
-        z-30 relative cursor-pointer flex items-center justify-center md:gap-4 gap-[2vw]
-        transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
-        ${fredoka.className}`}
-          >
-            Copy Link
-          </button>
-        </div>
-      )} */}
-
       {!id && (
         <Link href="/form">
           <button
             className={`bg-[#d98f8f] text-white font-bold text-[5vw] md:text-4xl py-[2svh] md:py-8 px-[6vw] md:px-[60px] rounded-full whitespace-nowrap 
           z-30 relative cursor-pointer
           transition-shadow duration-200 ease-in-out hover:shadow-[0_0_20px_rgba(217,143,143,0.8)]
-          ${fredoka.className}`}
+          font-fredoka`}
           >
             Back to Form
           </button>

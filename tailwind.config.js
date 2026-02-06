@@ -1,7 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -11,6 +16,12 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        // The value MUST match the variable name in fonts.ts
+        fredoka: ["var(--font-fredoka)", "sans-serif"],
+        poppins: ["var(--font-poppins)", "sans-serif"],
+        nanum: ["var(--font-nanum-pen)", "cursive"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -74,4 +85,3 @@ module.exports = {
   },
   plugins: [require("tailwindcss-animate")],
 }
-
