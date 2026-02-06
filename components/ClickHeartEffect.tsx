@@ -1,91 +1,322 @@
 "use client"
 
-import { useEffect, useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useRef, useCallback } from "react"
 
-interface Position {
-  x: number;
-  y: number;
-  id: number;
+// ── Particle data (CPU side) ────────────────────────────────────────────────
+interface ClickHeart {
+  ox: number          // origin x (px)
+  oy: number          // origin y (px)
+  dx: number          // target offset x (px)
+  dy: number          // target offset y (px)
+  startTime: number   // ms timestamp
+  duration: number    // seconds
+  initialScale: number
+  initialRotation: number // degrees
+  targetRotation: number  // degrees
 }
 
-export default function ClickHeartEffect() {
-  const [clicks, setClicks] = useState<Position[]>([]);
-  const nextId = useRef(0);
-  const animationCount = useRef<{[key: number]: number}>({});
+const MAX_PARTICLES = 300 // caps memory even with rapid clicking
+const HEART_SIZE = 24     // matches original 24×24 SVG
 
+// ── Shaders ─────────────────────────────────────────────────────────────────
+const VERT = `
+  attribute vec2 a_position;   // unit quad (0‑1)
+  attribute vec2 a_center;     // heart center in pixels
+  attribute float a_size;      // size in pixels (24 * scale)
+  attribute float a_opacity;
+  attribute float a_rotation;  // radians
+
+  uniform vec2 u_resolution;   // canvas width, height
+
+  varying float v_opacity;
+  varying vec2 v_uv;
+
+  void main() {
+    v_opacity = a_opacity;
+    v_uv = a_position;
+
+    // rotate around centre
+    vec2 offset = a_position - 0.5;
+    float c = cos(a_rotation);
+    float s = sin(a_rotation);
+    offset = vec2(offset.x * c - offset.y * s,
+                  offset.x * s + offset.y * c);
+
+    // pixel → clip‑space
+    vec2 pixelPos = a_center + offset * a_size;
+    vec2 clipPos = (pixelPos / u_resolution) * 2.0 - 1.0;
+    clipPos.y = -clipPos.y; // flip Y (pixel Y‑down → GL Y‑up)
+
+    gl_Position = vec4(clipPos, 0.0, 1.0);
+  }
+`
+
+const FRAG = `
+  precision mediump float;
+  varying float v_opacity;
+  varying vec2 v_uv;
+
+  float heartSDF(vec2 p) {
+    p = vec2(abs(p.x), p.y);
+    float d;
+    if (p.y + p.x > 1.0)
+      d = sqrt(dot(p - vec2(0.25, 0.75), p - vec2(0.25, 0.75))) - sqrt(2.0) / 4.0;
+    else
+      d = sqrt(min(dot(p - vec2(0.0, 1.0), p - vec2(0.0, 1.0)),
+                    dot(p - vec2(0.5, 0.5), p - vec2(0.5, 0.5)))) *
+          sign(p.x - p.y);
+    return d;
+  }
+
+  void main() {
+    vec2 p = (v_uv - 0.5) * 2.4;
+    p.y = -p.y + 0.2;
+
+    float d = heartSDF(p);
+    float alpha = 1.0 - smoothstep(-0.02, 0.02, d);
+
+    // #b35151 = rgb(179, 81, 81)
+    vec4 color = vec4(179.0/255.0, 81.0/255.0, 81.0/255.0, 1.0);
+    color.a *= v_opacity * alpha;
+    color.rgb *= color.a; // premultiply
+    gl_FragColor = color;
+  }
+`
+
+// ── Easing: cubic‑bezier(0, 0, 0.58, 1) approximation ──────────────────────
+function easeOut(t: number): number {
+  return 1 - Math.pow(1 - t, 3)
+}
+
+// ── Component ───────────────────────────────────────────────────────────────
+export default function ClickHeartEffect() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const particlesRef = useRef<ClickHeart[]>([])
+  const glRef = useRef<WebGLRenderingContext | null>(null)
+  const programRef = useRef<WebGLProgram | null>(null)
+  const bufferRef = useRef<WebGLBuffer | null>(null)
+  const locRef = useRef<Record<string, number | WebGLUniformLocation | null>>({})
+  const rafRef = useRef<number>(0)
+  const hasParticlesRef = useRef(false)
+  const vertexDataRef = useRef<Float32Array | null>(null)
+
+  const compileShader = useCallback(
+    (gl: WebGLRenderingContext, src: string, type: number) => {
+      const s = gl.createShader(type)!
+      gl.shaderSource(s, src)
+      gl.compileShader(s)
+      return s
+    },
+    [],
+  )
+
+  // ── Init WebGL ──────────────────────────────────────────────────────────
+  useEffect(() => {
+    const canvas = canvasRef.current!
+    const gl = canvas.getContext("webgl", {
+      alpha: true,
+      premultipliedAlpha: true,
+      antialias: true,
+    })!
+    glRef.current = gl
+
+    const vs = compileShader(gl, VERT, gl.VERTEX_SHADER)
+    const fs = compileShader(gl, FRAG, gl.FRAGMENT_SHADER)
+    const pgm = gl.createProgram()!
+    gl.attachShader(pgm, vs)
+    gl.attachShader(pgm, fs)
+    gl.linkProgram(pgm)
+    gl.useProgram(pgm)
+    programRef.current = pgm
+
+    locRef.current = {
+      a_position: gl.getAttribLocation(pgm, "a_position"),
+      a_center: gl.getAttribLocation(pgm, "a_center"),
+      a_size: gl.getAttribLocation(pgm, "a_size"),
+      a_opacity: gl.getAttribLocation(pgm, "a_opacity"),
+      a_rotation: gl.getAttribLocation(pgm, "a_rotation"),
+      u_resolution: gl.getUniformLocation(pgm, "u_resolution"),
+    }
+
+    bufferRef.current = gl.createBuffer()
+    gl.enable(gl.BLEND)
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
+
+    // Pre‑allocate vertex data
+    const FLOATS_PER_VERT = 7
+    const VERTS_PER_HEART = 6
+    vertexDataRef.current = new Float32Array(MAX_PARTICLES * VERTS_PER_HEART * FLOATS_PER_VERT)
+
+    return () => {
+      gl.deleteProgram(pgm)
+      gl.deleteShader(vs)
+      gl.deleteShader(fs)
+      if (bufferRef.current) gl.deleteBuffer(bufferRef.current)
+    }
+  }, [compileShader])
+
+  // ── Resize ──────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const onResize = () => {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    onResize()
+    window.addEventListener("resize", onResize)
+    return () => window.removeEventListener("resize", onResize)
+  }, [])
+
+  // ── Click handler (spawns 12 hearts) ────────────────────────────────────
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      const id = nextId.current++;
-      setClicks(prev => [...prev, { x: e.clientX, y: e.clientY, id }]);
-      animationCount.current[id] = 12; // Number of hearts per click
-    };
+      const now = performance.now()
+      const particles = particlesRef.current
 
-    window.addEventListener('click', handleClick);
-    return () => window.removeEventListener('click', handleClick);
-  }, []);
+      for (let i = 0; i < 12; i++) {
+        const angle = (i * Math.PI * 2) / 12 + Math.random() * 0.5
+        const distance = 100 + Math.random() * 100
+        const duration = 1 + Math.random() * 0.5
+        const initialScale = 0.5 + Math.random() * 1
 
-  const handleAnimationComplete = (clickId: number) => {
-    animationCount.current[clickId]--;
-    if (animationCount.current[clickId] === 0) {
-      setClicks(prev => prev.filter(click => click.id !== clickId));
-      delete animationCount.current[clickId];
+        const heart: ClickHeart = {
+          ox: e.clientX,
+          oy: e.clientY,
+          dx: Math.cos(angle) * distance,
+          dy: Math.sin(angle) * distance,
+          startTime: now,
+          duration,
+          initialScale,
+          initialRotation: Math.random() * 360,
+          targetRotation: Math.random() * 720 - 360,
+        }
+
+        if (particles.length < MAX_PARTICLES) {
+          particles.push(heart)
+        } else {
+          // recycle oldest
+          let oldestIdx = 0
+          let oldestTime = Infinity
+          for (let j = 0; j < particles.length; j++) {
+            const remaining = particles[j].duration - (now - particles[j].startTime) / 1000
+            if (remaining < oldestTime) {
+              oldestTime = remaining
+              oldestIdx = j
+            }
+          }
+          particles[oldestIdx] = heart
+        }
+      }
+
+      // Start render loop if not already running
+      if (!hasParticlesRef.current) {
+        hasParticlesRef.current = true
+        rafRef.current = requestAnimationFrame(loop)
+      }
     }
-  };
+
+    window.addEventListener("click", handleClick)
+    return () => window.removeEventListener("click", handleClick)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // ── Render loop (only runs while particles exist) ───────────────────────
+  const loop = useCallback((now: number) => {
+    const particles = particlesRef.current
+    const gl = glRef.current
+    const canvas = canvasRef.current
+
+    if (!gl || !canvas) return
+
+    // ── Update & cull dead particles ────────────────────────────────────
+    let writeIdx = 0
+    for (let i = 0; i < particles.length; i++) {
+      const elapsed = (now - particles[i].startTime) / 1000
+      if (elapsed < particles[i].duration) {
+        particles[writeIdx++] = particles[i]
+      }
+    }
+    particles.length = writeIdx
+
+    gl.viewport(0, 0, canvas.width, canvas.height)
+    gl.clearColor(0, 0, 0, 0)
+    gl.clear(gl.COLOR_BUFFER_BIT)
+
+    if (particles.length === 0) {
+      hasParticlesRef.current = false
+      return // stop loop — no particles, no rAF
+    }
+
+    rafRef.current = requestAnimationFrame(loop)
+
+    gl.useProgram(programRef.current)
+    gl.uniform2f(
+      locRef.current.u_resolution as WebGLUniformLocation,
+      canvas.width,
+      canvas.height,
+    )
+
+    const FLOATS_PER_VERT = 7
+    const VERTS_PER_HEART = 6
+    const FLOATS_PER_HEART = VERTS_PER_HEART * FLOATS_PER_VERT
+    const DEG2RAD = Math.PI / 180
+
+    const quadVerts = [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]
+
+    const data = vertexDataRef.current!
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i]
+      const t = Math.min((now - p.startTime) / 1000 / p.duration, 1)
+      const e = easeOut(t)
+
+      const cx = p.ox + p.dx * e
+      const cy = p.oy + p.dy * e
+      const scale = p.initialScale * (1 - e) // shrinks to 0
+      const rotation = (p.initialRotation + (p.targetRotation - p.initialRotation) * e) * DEG2RAD
+      const size = HEART_SIZE * scale
+      const opacity = 1 - t * t // gentle fade near end
+
+      const base = i * FLOATS_PER_HEART
+      for (let v = 0; v < 6; v++) {
+        const off = base + v * FLOATS_PER_VERT
+        data[off    ] = quadVerts[v * 2]
+        data[off + 1] = quadVerts[v * 2 + 1]
+        data[off + 2] = cx
+        data[off + 3] = cy
+        data[off + 4] = size
+        data[off + 5] = opacity
+        data[off + 6] = rotation
+      }
+    }
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferRef.current)
+    gl.bufferData(gl.ARRAY_BUFFER, data.subarray(0, particles.length * FLOATS_PER_HEART), gl.DYNAMIC_DRAW)
+
+    const stride = FLOATS_PER_VERT * 4
+    const enable = (name: string, size: number, offset: number) => {
+      const loc = locRef.current[name] as number
+      gl.enableVertexAttribArray(loc)
+      gl.vertexAttribPointer(loc, size, gl.FLOAT, false, stride, offset * 4)
+    }
+
+    enable("a_position", 2, 0)
+    enable("a_center", 2, 2)
+    enable("a_size", 1, 4)
+    enable("a_opacity", 1, 5)
+    enable("a_rotation", 1, 6)
+
+    gl.drawArrays(gl.TRIANGLES, 0, particles.length * 6)
+  }, [])
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999]">
-      <AnimatePresence>
-        {clicks.map((click) => (
-          <div key={click.id}>
-            {[...Array(12)].map((_, i) => {
-              const angle = (i * Math.PI * 2) / 12 + Math.random() * 0.5;
-              const distance = 100 + Math.random() * 100;
-              const duration = 1 + Math.random() * 0.5;
-              const initialScale = 0.5 + Math.random() * 1;
-              
-              return (
-                <motion.div
-                  key={`${click.id}-${i}`}
-                  initial={{
-                    x: click.x,
-                    y: click.y,
-                    scale: initialScale,
-                    opacity: 1,
-                    rotate: Math.random() * 360
-                  }}
-                  animate={{
-                    x: click.x + Math.cos(angle) * distance,
-                    y: click.y + Math.sin(angle) * distance,
-                    scale: 0,
-                    rotate: Math.random() * 720 - 360
-                  }}
-                  transition={{
-                    duration: duration,
-                    ease: "easeOut"
-                  }}
-                  onAnimationComplete={() => handleAnimationComplete(click.id)}
-                  className="absolute"
-                  style={{ 
-                    x: click.x, 
-                    y: click.y,
-                    transform: `translate(-50%, -50%)`
-                  }}
-                >
-                  <svg 
-                    className="text-[#b35151] fill-current"
-                    width={24} 
-                    height={24} 
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                  </svg>
-                </motion.div>
-              );
-            })}
-          </div>
-        ))}
-      </AnimatePresence>
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full"
+        style={{ display: "block" }}
+      />
     </div>
-  );
+  )
 }
