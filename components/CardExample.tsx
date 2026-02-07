@@ -6,43 +6,15 @@ import SuccessModal from "../components/SuccessModal"
 import HeartBackground from "../components/HeartBackground"
 import FramedImage from "../components/FramedImage"
 import BrokenHeart from "../components/BrokenHeart"
-import { useIsMobile } from "@/hooks/use-mobile" // Add this import
+import { useIsMobile } from "@/hooks/use-mobile"
 import { YesButton } from "../components/YesButton"
 import stamp1 from "@/assets/stamp 1.png"
 import stamp2 from "@/assets/stamp 2.png"
 import stamp3 from "@/assets/stamp 3.png"
 import stampFrame from "@/assets/square stamp frame.png"
 import Image from "next/image"
-
-
-interface ValentineProposalProps {
-  imgUrl: string
-  imgCaption: string
-  imgUrl2: string
-  imgCaption2: string
-  valentineName: string
-  senderName: string
-  message: string
-  selectedStamp?: string
-}
-
-const noMessages = [
-  "are you sure?",
-  "really sure?",
-  "think again!",
-  "last chance!",
-  "surely not?",
-  "you might regret this!",
-  "give it another thought!",
-  "are you absolutely certain?",
-  "this could be a mistake!",
-  "have a heart!",
-  "don't be so cold!",
-  "change of heart?",
-  "wouldn't you reconsider?",
-  "is that your final answer?",
-  "you're breaking my heart ;(",
-]
+import { declineMessages } from "@/lib/constants"
+import { ValentineProposalProps } from "@/lib/types"
 
 export default function ValentineProposal({
   imgUrl,
@@ -73,7 +45,7 @@ export default function ValentineProposal({
 
   const handleNoClick = () => {
     setNoClicked(true)
-    setMessageIndex((prev) => (prev + 1) % noMessages.length)
+    setMessageIndex((prev) => (prev + 1) % declineMessages.length)
 
     if (containerRef.current) {
       const container = containerRef.current
@@ -273,7 +245,7 @@ export default function ValentineProposal({
                   exit={{ opacity: 0, y: 10 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {noMessages[messageIndex]}
+                  {declineMessages[messageIndex]}
                 </motion.span>
               )}
             </AnimatePresence>

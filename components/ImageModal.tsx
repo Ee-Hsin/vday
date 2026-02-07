@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
 import Image from "next/image"
 interface ImageModalProps {
   isOpen: boolean
