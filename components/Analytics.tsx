@@ -6,7 +6,6 @@ import { analytics } from "@/lib/firebase"
 import { logEvent } from "firebase/analytics"
 import { usePathname } from "next/navigation"
 
-// Define the type for the analytics object
 interface Analytics {
   logEvent: (eventName: string, params: { [key: string]: any }) => void
 }

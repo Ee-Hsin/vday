@@ -1,0 +1,17 @@
+export const declineMessages = [
+  "are you sure?",
+  "really sure?",
+  "think again!",
+  "last chance!",
+  "surely not?",
+  "you might regret this!",
+  "give it another thought!",
+  "are you absolutely certain?",
+  "this could be a mistake!",
+  "have a heart!",
+  "don't be so cold!",
+  "change of heart?",
+  "wouldn't you reconsider?",
+  "is that your final answer?",
+  "you're breaking my heart ;(",
+]
