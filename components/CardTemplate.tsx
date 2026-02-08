@@ -26,6 +26,8 @@ export default function ValentineProposal({
   senderName,
   message,
   selectedStamp = "stamp1",
+  showClickHeartEffect = true,
+  autoResizeEnvelopeText = true,
 }: ValentineProposalProps) {
   const [showModal, setShowModal] = useState(false)
   const [noClicked, setNoClicked] = useState(false)
@@ -91,7 +93,7 @@ export default function ValentineProposal({
       className="min-h-svh min-w-[100svw] bg-[#ffeded] flex flex-col items-center justify-center p-4 overflow-hidden relative"
       onMouseMove={handleMouseMove}
     >
-      <ClickHeartEffect />
+      {showClickHeartEffect && <ClickHeartEffect />}
       <HeartBackground />
 
       <AnimatePresence>
@@ -126,7 +128,11 @@ export default function ValentineProposal({
               />
             </div>
             <div
-              className={`font-nanum text-white ${valentineName.length > 15 || senderName.length > 15 ? 'text-3xl md:text-6xl' : 'text-5xl md:text-7xl'} space-y-2 px-6`}
+              className={`font-nanum text-white ${
+                autoResizeEnvelopeText && (valentineName.length > 15 || senderName.length > 15)
+                  ? "text-3xl md:text-6xl"
+                  : "text-5xl md:text-7xl"
+              } space-y-2 px-6`}
             >
               <p>To: {valentineName}</p>
               <p>From: {senderName}</p>

@@ -7,4 +7,6 @@ export interface ValentineProposalProps {
   senderName: string
   message: string
   selectedStamp?: string
+  showClickHeartEffect?: boolean
+  autoResizeEnvelopeText?: boolean
 }
