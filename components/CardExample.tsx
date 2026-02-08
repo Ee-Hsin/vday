@@ -39,8 +39,8 @@ export default function ValentineProposal({
 
   const handleYesClick = () => {
     setShowModal(true)
-    setExtraYesButtons([]) // Clear extra buttons
-    setMessageIndex(0) // Reset counter
+    setExtraYesButtons([])
+    setMessageIndex(0)
   }
 
   const handleNoClick = () => {
@@ -52,13 +52,11 @@ export default function ValentineProposal({
       const rect = container.getBoundingClientRect()
 
       const BUTTON_WIDTH = isMobile ? 50 : 70
-      const BUTTON_HEIGHT = 40 // Approximate button height
+      const BUTTON_HEIGHT = 40
 
-      // Calculate center point
       const centerX = rect.left + rect.width / 2
       const centerY = rect.top + rect.height / 2
 
-      // Calculate max offset (half of container dimensions)
       const maxOffsetX = rect.width / 2 - BUTTON_WIDTH
       const maxOffsetY = rect.height / 2 - BUTTON_HEIGHT
 
@@ -69,8 +67,8 @@ export default function ValentineProposal({
           const offsetY = (Math.random() - 0.5) * 2 * maxOffsetY
 
           return {
-            x: centerX + offsetX - BUTTON_WIDTH / 2, // Offset by half button width
-            y: centerY + offsetY - BUTTON_HEIGHT / 2, // Offset by half button height
+            x: centerX + offsetX - BUTTON_WIDTH / 2,
+            y: centerY + offsetY - BUTTON_HEIGHT / 2,
           }
         })
 
@@ -92,7 +90,6 @@ export default function ValentineProposal({
       className="min-h-svh min-w-[100svw] bg-[#ffeded] flex flex-col items-center justify-center p-4 overflow-hidden relative"
       onMouseMove={handleMouseMove}
     >
-      {/* <ClickHeartEffect /> */}
       <HeartBackground />
 
       <AnimatePresence>

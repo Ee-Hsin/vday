@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { Suspense } from "react" // Import Suspense
+import { Suspense } from "react"
 import Image from "next/image"
 import HeartBackground from "@/components/HeartBackground"
 import ClickHeartEffect from "@/components/ClickHeartEffect"
@@ -28,13 +28,10 @@ function SuccessPage() {
         <MdHome className="w-[4svh] h-[4svh] md:w-[40px] md:h-[40px]" />
       </Link>
 
-      {/* Content */}
-
       <Suspense fallback={<p className="font-poppins">Loading...</p>}>
         <SearchParamsContent />
       </Suspense>
 
-      {/* Background Images */}
       <div className="fixed bottom-0 left-0 w-full pointer-events-none">
         <div className="hidden md:block">
           <Image
@@ -123,7 +120,6 @@ function SearchParamsContent() {
           : "Please try submitting the form again. Make sure there is an 'id value' in this page's url."}
       </p>
 
-      {/* URL input container - hidden on mobile */}
       {id && (
         <div className="w-full flex justify-center">
           <div className="flex justify-center items-center w-fit bg-[#d98f8f] rounded-3xl px-6 py-3 my-3">

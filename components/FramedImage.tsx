@@ -29,7 +29,6 @@ export default function FramedImage({
         }}
       >
         <div className="relative flex flex-col">
-          {/* Fixed square image container */}
           <div className="relative aspect-square w-full transform">
             {src == "fallbackStamp" ? (
               <Image
@@ -47,7 +46,6 @@ export default function FramedImage({
               />
             )}
           </div>
-          {/* Caption with automatic height */}
           <p
             className={`
             text-center text-sm mt-2 text-pink-800
