@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Minus, Maximize2, Minimize2, RotateCw, Search } from "lucide-react"
-import ValentineProposal from "@/components/CardExample"
+import ValentineProposal from "@/components/CardTemplate"
 import { useState } from "react"
 
 interface ExampleModalProps {
@@ -85,6 +85,8 @@ export default function ExampleModal({ isOpen, onClose }: ExampleModalProps) {
                   valentineName="Chaewon"
                   senderName="Jordan"
                   message="I've made reservations at Nobu for Friday. I'll see you at 7:30 then, it's gonna be great!"
+                  showClickHeartEffect={false}
+                  autoResizeEnvelopeText={false}
                 />
               </div>
             </div>
