@@ -7,7 +7,7 @@ import HeartBackground from "../components/HeartBackground"
 import FramedImage from "../components/FramedImage"
 import BrokenHeart from "../components/BrokenHeart"
 import ClickHeartEffect from "@/components/ClickHeartEffect"
-import { useIsMobile } from "@/hooks/use-mobile" // Add this import
+import { useIsMobile } from "@/hooks/use-mobile"
 import { YesButton } from "../components/YesButton"
 import stamp1 from "@/assets/stamp 1.png"
 import stamp2 from "@/assets/stamp 2.png"
@@ -40,8 +40,8 @@ export default function ValentineProposal({
 
   const handleYesClick = () => {
     setShowModal(true)
-    setExtraYesButtons([]) // Clear extra buttons
-    setMessageIndex(0) // Reset counter
+    setExtraYesButtons([])
+    setMessageIndex(0)
   }
 
   const handleNoClick = () => {
@@ -53,13 +53,11 @@ export default function ValentineProposal({
       const rect = container.getBoundingClientRect()
 
       const BUTTON_WIDTH = isMobile ? 50 : 70
-      const BUTTON_HEIGHT = 40 // Approximate button height
+      const BUTTON_HEIGHT = 40
 
-      // Calculate center point
       const centerX = rect.left + rect.width / 2
       const centerY = rect.top + rect.height / 2
 
-      // Calculate max offset (half of container dimensions)
       const maxOffsetX = rect.width / 2 - BUTTON_WIDTH
       const maxOffsetY = rect.height / 2 - BUTTON_HEIGHT
 
@@ -70,8 +68,8 @@ export default function ValentineProposal({
           const offsetY = (Math.random() - 0.5) * 2 * maxOffsetY
 
           return {
-            x: centerX + offsetX - BUTTON_WIDTH / 2, // Offset by half button width
-            y: centerY + offsetY - BUTTON_HEIGHT / 2, // Offset by half button height
+            x: centerX + offsetX - BUTTON_WIDTH / 2,
+            y: centerY + offsetY - BUTTON_HEIGHT / 2,
           }
         })
 

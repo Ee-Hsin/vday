@@ -121,7 +121,6 @@ export default function ValentineForm() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="flex flex-col md:flex-row gap-6">
-              {/* First Container - Names and Message */}
               <div className="flex-1 bg-[#E5A4A4] rounded-xl p-6 space-y-4">
                 <FormField
                   control={form.control}
@@ -173,7 +172,6 @@ export default function ValentineForm() {
                     </FormItem>
                   )}
                 />
-                {/* Stamp Selection */}
                 <div className="space-y-2">
                   <h3
                     className={`text-white text-xl font-semibold font-fredoka`}
@@ -195,7 +193,6 @@ export default function ValentineForm() {
                                   setSelectedStamp(stamp.id)
                                   form.setValue("selectedStamp", stamp.id)
                                 }}
-                                // We'll need to add the selectedStamp photo and switch to that instead
                                 className={`
                                   w-24 h-24 rounded-lg p-1 transition-all relative
                                   ${
@@ -234,7 +231,6 @@ export default function ValentineForm() {
                 </div>
               </div>
 
-              {/* Second Container - Photos and Captions */}
               <div className="flex-1 bg-[#E5A4A4] rounded-xl p-6">
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
@@ -242,8 +238,6 @@ export default function ValentineForm() {
                     name="image1"
                     render={({ field: { onChange, ...field } }) => (
                       <div className="bg-white p-3 pb-0 rounded-lg shadow-md w-full h-full grid grid-rows-[auto_1fr_auto] gap-2">
-                        {" "}
-                        {/* Polaroid frame */}
                         <FormItem className="bg-[#D9D9D9] w-full aspect-square rounded-md relative overflow-hidden">
                           <div className="w-full h-full aspect-square">
                             <Image
@@ -263,7 +257,6 @@ export default function ValentineForm() {
 
                                     let previewUrl = null
 
-                                    // Check file type
                                     const validTypes = [
                                       "image/jpeg",
                                       "image/png",
@@ -275,11 +268,10 @@ export default function ValentineForm() {
                                         message:
                                           "File type not supported. Please upload PNG or JPG only.",
                                       })
-                                      e.target.value = "" // Reset input
+                                      e.target.value = ""
                                       return
                                     }
 
-                                    // Clear error if file type is valid
                                     form.clearErrors("image1")
 
                                     if (
@@ -291,7 +283,6 @@ export default function ValentineForm() {
                                       file.name.toLowerCase().endsWith(".heif")
                                     ) {
                                       try {
-                                        // Convert HEIC to JPEG
                                         const blob = await heic2any({
                                           blob: file,
                                           toType: "image/jpeg",
@@ -309,8 +300,6 @@ export default function ValentineForm() {
 
                                         previewUrl =
                                           URL.createObjectURL(convertedFile)
-                                        // onChange(file) // Pass the converted file instead of original
-                                        // setPreview1(previewUrl) // or setPreview2 for second image
                                       } catch (error) {
                                         console.error(
                                           "HEIC conversion failed:",
@@ -352,7 +341,6 @@ export default function ValentineForm() {
                                     </div>
                                   ) : (
                                     <div className="flex items-center justify-center h-40 text-gray-500">
-                                      {/* Photo 1 <br/> Upload */}
                                     </div>
                                   )}
                                 </label>
@@ -450,7 +438,6 @@ export default function ValentineForm() {
 
                                     let previewUrl = null
 
-                                    // Check file type
                                     const validTypes = [
                                       "image/jpeg",
                                       "image/png",
@@ -462,11 +449,10 @@ export default function ValentineForm() {
                                         message:
                                           "File type not supported. Please upload PNG or JPG only.",
                                       })
-                                      e.target.value = "" // Reset input
+                                      e.target.value = ""
                                       return
                                     }
 
-                                    // Clear error if file type is valid
                                     form.clearErrors("image2")
 
                                     if (
@@ -478,7 +464,6 @@ export default function ValentineForm() {
                                       file.name.toLowerCase().endsWith(".heif")
                                     ) {
                                       try {
-                                        // Convert HEIC to JPEG
                                         const blob = await heic2any({
                                           blob: file,
                                           toType: "image/jpeg",
@@ -496,8 +481,6 @@ export default function ValentineForm() {
 
                                         previewUrl =
                                           URL.createObjectURL(convertedFile)
-                                        // onChange(convertedFile);
-                                        // setPreview2(previewUrl);
                                       } catch (error) {
                                         console.error(
                                           "HEIC conversion failed:",
@@ -539,7 +522,6 @@ export default function ValentineForm() {
                                     </div>
                                   ) : (
                                     <div className="flex items-center justify-center h-40 text-gray-500">
-                                      {/* Photo 2 <br/> Upload */}
                                     </div>
                                   )}
                                 </label>
