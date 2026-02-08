@@ -86,7 +86,6 @@ export default function ExampleModal({ isOpen, onClose }: ExampleModalProps) {
                   senderName="Jordan"
                   message="I've made reservations at Nobu for Friday. I'll see you at 7:30 then, it's gonna be great!"
                   showClickHeartEffect={false}
-                  autoResizeEnvelopeText={false}
                 />
               </div>
             </div>

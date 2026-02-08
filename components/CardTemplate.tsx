@@ -15,7 +15,18 @@ import stamp3 from "@/assets/stamp 3.png"
 import stampFrame from "@/assets/square stamp frame.png"
 import Image from "next/image"
 import { declineMessages } from "@/lib/constants"
-import { ValentineProposalProps } from "@/lib/types"
+
+interface ValentineProposalProps {
+  imgUrl: string
+  imgCaption: string
+  imgUrl2: string
+  imgCaption2: string
+  valentineName: string
+  senderName: string
+  message: string
+  selectedStamp?: string
+  showClickHeartEffect?: boolean
+}
 
 export default function ValentineProposal({
   imgUrl,
@@ -27,7 +38,6 @@ export default function ValentineProposal({
   message,
   selectedStamp = "stamp1",
   showClickHeartEffect = true,
-  autoResizeEnvelopeText = true,
 }: ValentineProposalProps) {
   const [showModal, setShowModal] = useState(false)
   const [noClicked, setNoClicked] = useState(false)
@@ -120,8 +130,8 @@ export default function ValentineProposal({
                   selectedStamp === "stamp2"
                     ? stamp2
                     : selectedStamp === "stamp3"
-                    ? stamp3
-                    : stamp1
+                      ? stamp3
+                      : stamp1
                 }
                 alt="Selected Stamp"
                 className="w-full h-full object-contain relative z-10"
@@ -129,7 +139,7 @@ export default function ValentineProposal({
             </div>
             <div
               className={`font-nanum text-white ${
-                autoResizeEnvelopeText && (valentineName.length > 15 || senderName.length > 15)
+                valentineName.length > 15 || senderName.length > 15
                   ? "text-3xl md:text-6xl"
                   : "text-5xl md:text-7xl"
               } space-y-2 px-6`}
