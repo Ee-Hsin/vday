@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Minus, Maximize2, Minimize2, RotateCw, Search } from "lucide-react"
-import ValentineProposal from "@/components/CardExample"
+import ValentineProposal from "@/components/CardTemplate"
 import { useState } from "react"
 
 interface ExampleModalProps {
@@ -12,7 +12,7 @@ interface ExampleModalProps {
 
 export default function ExampleModal({ isOpen, onClose }: ExampleModalProps) {
   const [isMaximized, setIsMaximized] = useState(false)
-  const [key, setKey] = useState(0) // For forcing re-render
+  const [key, setKey] = useState(0)
   const mockUrl = "https://www.valentineproposal.com/example"
 
   const handleReload = () => {
@@ -40,7 +40,6 @@ export default function ExampleModal({ isOpen, onClose }: ExampleModalProps) {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
           >
-            {/* Title Bar */}
             <div className={`font-fredoka h-10 bg-[#d98f8f] flex items-center justify-between px-4 flex-shrink-0 gap-4`}>
               <button 
                 onClick={handleReload}
@@ -72,7 +71,6 @@ export default function ExampleModal({ isOpen, onClose }: ExampleModalProps) {
               </div>
             </div>
 
-            {/* Content Container */}
             <div className="flex-1 overflow-hidden bg-[#ffeded] p-4 md:p-8">
               <div key={key} className={`w-full h-full flex items-center justify-center transform ${
                 isMaximized 
@@ -87,6 +85,7 @@ export default function ExampleModal({ isOpen, onClose }: ExampleModalProps) {
                   valentineName="Chaewon"
                   senderName="Jordan"
                   message="I've made reservations at Nobu for Friday. I'll see you at 7:30 then, it's gonna be great!"
+                  showClickHeartEffect={false}
                 />
               </div>
             </div>
