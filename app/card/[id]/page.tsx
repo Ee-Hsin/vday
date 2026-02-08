@@ -1,71 +1,65 @@
-"use client";
-
-import { useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { analytics, db } from '@/lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
-import ValentineProposal from "@/components/CardTemplate";
-import LoadingScreen from "@/components/LoadingScreen"
+import { adminDb } from "@/lib/firebase-admin"
+import ValentineProposal from "@/components/CardTemplate"
 import ErrorScreen from "@/components/ErrorScreen"
-import { logEvent } from 'firebase/analytics';
+import AnalyticsTracker from "@/components/AnalyticsTracker"
+import { ValentineProposalProps } from "@/lib/types"
 
-export default function CardPage() {
-  const params = useParams();
-  const id = Array.isArray(params.id) ? params.id[0] : params.id;
-  const [cardData, setCardData] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface PageProps {
+  params: { id: string }
+}
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
+export default async function CardPage({ params }: PageProps) {
+  const { id } = params
 
-      try {
-        const docRef = doc(db, "valentineMessages", id);
-        const docSnap = await getDoc(docRef);
+  let cardData: ValentineProposalProps | null = null
+  let error: string | null = null
 
-        if (docSnap.exists()) {
-          setCardData(docSnap.data());
-        } else {
-          setError("Card not found!");
+  try {
+    const docSnap = await adminDb.collection("valentineMessages").doc(id).get()
+
+    if (docSnap.exists) {
+      const data = docSnap.data()
+
+      if (data) {
+        cardData = {
+          valentineName: data.recipientName || "",
+          senderName: data.senderName || "",
+          message: data.message || "",
+          imgUrl: data.image1URL || null,
+          imgCaption: data.caption1 || "",
+          imgUrl2: data.image2URL || null,
+          imgCaption2: data.caption2 || "",
+          selectedStamp: data.selectedStamp || "stamp1",
         }
-      } catch (err) {
-        setError("Error fetching card");
-      } finally {
-        if (analytics){
-          logEvent(analytics, "custom_card_viewed", { id: id})
-        }
-        setLoading(false);
       }
+    } else {
+      error = "Card not found!"
     }
-
-    if (id) {
-      fetchData();
-    }
-  }, [id]);
-
-  if (loading) {
-    return <LoadingScreen />
+  } catch (err) {
+    console.error("Admin SDK Error:", err)
+    error = "Error fetching card"
   }
 
-  if (error) {
-    return <ErrorScreen message={error ?? "Something went wrong"} />
-  }
-
-  if (!cardData) {
-    return <ErrorScreen message={error ?? "Card not found"} />
+  if (error || !cardData) {
+    return <ErrorScreen message={error || "Unknown Error"} />
   }
 
   return (
-    <ValentineProposal
-      imgUrl={cardData.image1URL || "/fallback-image.jpg"}
-      imgCaption={cardData.caption1 || ""}
-      imgUrl2={cardData.image2URL || "/fallback-image.jpg"}
-      imgCaption2={cardData.caption2 || ""}
-      valentineName={cardData.recipientName}
-      senderName={cardData.senderName}
-      message={cardData.message}
-      selectedStamp={cardData.selectedStamp || ""}
-    />
-  );
+    <>
+      <AnalyticsTracker
+        eventName="custom_card_viewed"
+        eventParams={{ id: id }}
+      />
+      <ValentineProposal
+        imgUrl={cardData.imgUrl || "/fallback-image.jpg"}
+        imgCaption={cardData.imgCaption || ""}
+        imgUrl2={cardData.imgUrl2 || "/fallback-image.jpg"}
+        imgCaption2={cardData.imgCaption2 || ""}
+        valentineName={cardData.valentineName}
+        senderName={cardData.senderName}
+        message={cardData.message}
+        selectedStamp={cardData.selectedStamp || "stamp1"}
+      />
+    </>
+  )
 }

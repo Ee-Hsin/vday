@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
@@ -15,18 +17,7 @@ import stamp3 from "@/assets/stamp 3.png"
 import stampFrame from "@/assets/square stamp frame.png"
 import Image from "next/image"
 import { declineMessages } from "@/lib/constants"
-
-interface ValentineProposalProps {
-  imgUrl: string
-  imgCaption: string
-  imgUrl2: string
-  imgCaption2: string
-  valentineName: string
-  senderName: string
-  message: string
-  selectedStamp?: string
-  showClickHeartEffect?: boolean
-}
+import { ValentineProposalProps } from "@/lib/types"
 
 export default function ValentineProposal({
   imgUrl,
