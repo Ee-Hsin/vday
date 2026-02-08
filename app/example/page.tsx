@@ -1,5 +1,3 @@
-"use client"
-
 import ValentineProposal from "@/components/CardTemplate";
 
 export default function Example() {
