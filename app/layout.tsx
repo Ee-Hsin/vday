@@ -1,9 +1,8 @@
 import type { Metadata } from "next"
 import "./globals.css"
-import Analytics from "@/components/Analytics" //firebase analytics
 import { Analytics as NextJSAnalytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
-import { fontFredoka, fontPoppins, fontNanumPen } from "@/lib/fonts";
+import { fontFredoka, fontPoppins, fontNanumPen } from "@/lib/fonts"
 
 export const metadata: Metadata = {
   title: "Valentine Proposal",
@@ -17,7 +16,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${fontFredoka.variable} ${fontPoppins.variable} ${fontNanumPen.variable}`}>
+    <html
+      lang="en"
+      className={`${fontFredoka.variable} ${fontPoppins.variable} ${fontNanumPen.variable}`}
+    >
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link
@@ -40,7 +42,6 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body>
-        <Analytics />
         {children}
         <NextJSAnalytics />
         <SpeedInsights />
