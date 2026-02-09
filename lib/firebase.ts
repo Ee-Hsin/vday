@@ -1,5 +1,3 @@
-// lib/firebase.js
-
 import { initializeApp } from 'firebase/app';
 import { getAnalytics, isSupported, Analytics } from "firebase/analytics";
 import { getFirestore } from 'firebase/firestore';
@@ -20,10 +18,9 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-// Explicitly type `analytics` as Analytics (or undefined if not supported yet)
 let analytics: Analytics | undefined = undefined;
 
-// Prevents errors in SSR by ensuring Analytics only runs in the browser
+// Analytics should only run in browser
 if (typeof window !== "undefined") {
   isSupported().then((supported) => {
     if (supported) {
@@ -31,14 +28,13 @@ if (typeof window !== "undefined") {
     }
   });
 
-  // To set up App Check
-  // Enables the "Debug Token" in browser console when running locally (npm run dev)
+  // App check debug token can be seen in console during local dev
   if (process.env.NODE_ENV === 'development') {
     // @ts-ignore
     self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
   }
 
-  // Next.js hot-reloading can try to init App Check twice
+  // need a try catch for development as Next.js hot-reloading can try to init App Check twice
   try {
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
     
