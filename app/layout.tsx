@@ -6,7 +6,7 @@ import { fontFredoka, fontPoppins, fontNanumPen } from "@/lib/fonts"
 
 export const metadata: Metadata = {
   title: "Valentine Proposal",
-  description: "Be my valentine",
+  description: "Will you be my valentine?",
   icons: {
     icon: "/favicon.ico",
   },
