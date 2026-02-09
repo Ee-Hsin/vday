@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
@@ -7,59 +9,15 @@ import HeartBackground from "../components/HeartBackground"
 import FramedImage from "../components/FramedImage"
 import BrokenHeart from "../components/BrokenHeart"
 import ClickHeartEffect from "@/components/ClickHeartEffect"
-import { Fredoka, Poppins, Nanum_Pen_Script } from "next/font/google"
-import { useIsMobile } from "@/hooks/use-mobile" // Add this import
+import { useIsMobile } from "@/hooks/use-mobile"
 import { YesButton } from "../components/YesButton"
 import stamp1 from "@/assets/stamp 1.png"
 import stamp2 from "@/assets/stamp 2.png"
 import stamp3 from "@/assets/stamp 3.png"
 import stampFrame from "@/assets/square stamp frame.png"
 import Image from "next/image"
-
-const fredoka = Fredoka({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-})
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400"],
-})
-
-const nanumPen = Nanum_Pen_Script({
-  weight: "400",
-  subsets: ["latin"],
-  adjustFontFallback: false,
-})
-
-interface ValentineProposalProps {
-  imgUrl: string
-  imgCaption: string
-  imgUrl2: string
-  imgCaption2: string
-  valentineName: string
-  senderName: string
-  message: string
-  selectedStamp?: string
-}
-
-const noMessages = [
-  "are you sure?",
-  "really sure?",
-  "think again!",
-  "last chance!",
-  "surely not?",
-  "you might regret this!",
-  "give it another thought!",
-  "are you absolutely certain?",
-  "this could be a mistake!",
-  "have a heart!",
-  "don't be so cold!",
-  "change of heart?",
-  "wouldn't you reconsider?",
-  "is that your final answer?",
-  "you're breaking my heart ;(",
-]
+import { declineMessages } from "@/lib/constants"
+import { ValentineProposalProps } from "@/lib/types"
 
 export default function ValentineProposal({
   imgUrl,
@@ -70,6 +28,7 @@ export default function ValentineProposal({
   senderName,
   message,
   selectedStamp = "stamp1",
+  showClickHeartEffect = true,
 }: ValentineProposalProps) {
   const [showModal, setShowModal] = useState(false)
   const [noClicked, setNoClicked] = useState(false)
@@ -84,26 +43,24 @@ export default function ValentineProposal({
 
   const handleYesClick = () => {
     setShowModal(true)
-    setExtraYesButtons([]) // Clear extra buttons
-    setMessageIndex(0) // Reset counter
+    setExtraYesButtons([])
+    setMessageIndex(0)
   }
 
   const handleNoClick = () => {
     setNoClicked(true)
-    setMessageIndex((prev) => (prev + 1) % noMessages.length)
+    setMessageIndex((prev) => (prev + 1) % declineMessages.length)
 
     if (containerRef.current) {
       const container = containerRef.current
       const rect = container.getBoundingClientRect()
 
       const BUTTON_WIDTH = isMobile ? 50 : 70
-      const BUTTON_HEIGHT = 40 // Approximate button height
+      const BUTTON_HEIGHT = 40
 
-      // Calculate center point
       const centerX = rect.left + rect.width / 2
       const centerY = rect.top + rect.height / 2
 
-      // Calculate max offset (half of container dimensions)
       const maxOffsetX = rect.width / 2 - BUTTON_WIDTH
       const maxOffsetY = rect.height / 2 - BUTTON_HEIGHT
 
@@ -114,8 +71,8 @@ export default function ValentineProposal({
           const offsetY = (Math.random() - 0.5) * 2 * maxOffsetY
 
           return {
-            x: centerX + offsetX - BUTTON_WIDTH / 2, // Offset by half button width
-            y: centerY + offsetY - BUTTON_HEIGHT / 2, // Offset by half button height
+            x: centerX + offsetX - BUTTON_WIDTH / 2,
+            y: centerY + offsetY - BUTTON_HEIGHT / 2,
           }
         })
 
@@ -137,7 +94,7 @@ export default function ValentineProposal({
       className="min-h-svh min-w-[100svw] bg-[#ffeded] flex flex-col items-center justify-center p-4 overflow-hidden relative"
       onMouseMove={handleMouseMove}
     >
-      <ClickHeartEffect />
+      {showClickHeartEffect && <ClickHeartEffect />}
       <HeartBackground />
 
       <AnimatePresence>
@@ -164,15 +121,19 @@ export default function ValentineProposal({
                   selectedStamp === "stamp2"
                     ? stamp2
                     : selectedStamp === "stamp3"
-                    ? stamp3
-                    : stamp1
+                      ? stamp3
+                      : stamp1
                 }
                 alt="Selected Stamp"
                 className="w-full h-full object-contain relative z-10"
               />
             </div>
             <div
-              className={`${nanumPen.className} text-white ${valentineName.length > 15 || senderName.length > 15 ? 'text-3xl md:text-6xl' : 'text-5xl md:text-7xl'} space-y-2 px-6`}
+              className={`font-nanum text-white ${
+                valentineName.length > 15 || senderName.length > 15
+                  ? "text-3xl md:text-6xl"
+                  : "text-5xl md:text-7xl"
+              } space-y-2 px-6`}
             >
               <p>To: {valentineName}</p>
               <p>From: {senderName}</p>
@@ -187,7 +148,7 @@ export default function ValentineProposal({
           bg-[#ffffff] rounded-lg shadow-lg p-8 flex flex-col items-center z-10 justify-between"
       >
         <h1
-          className={`${fredoka.className} text-3xl md:text-4xl font-bold text-[#cd7b7b] text-center flex items-center justify-center`}
+          className={`font-fredoka text-3xl md:text-4xl font-bold text-[#cd7b7b] text-center flex items-center justify-center`}
         >
           Hi {valentineName}, will you be my Valentine?
         </h1>
@@ -221,7 +182,7 @@ export default function ValentineProposal({
 
         <div className="flex items-center space-x-5 relative">
           <Button
-            className={`${fredoka.className} bg-[#d98f8f] hover:bg-[#a55c5c] text-white w-[70px] font-medium rounded-xl text-lg -ml-[95px] shadow-md`}
+            className={`font-fredoka bg-[#d98f8f] hover:bg-[#a55c5c] text-white w-[70px] font-medium rounded-xl text-lg -ml-[95px] shadow-md`}
             onClick={handleYesClick}
           >
             Yes
@@ -245,7 +206,7 @@ export default function ValentineProposal({
             }
           >
             <Button
-              className={`${fredoka.className} bg-gray-300 hover:bg-gray-400 text-gray-700 w-[70px] font-medium rounded-xl text-lg relative shadow-md overflow-visible`}
+              className={`font-fredoka bg-gray-300 hover:bg-gray-400 text-gray-700 w-[70px] font-medium rounded-xl text-lg relative shadow-md overflow-visible`}
               onClick={handleNoClick}
             >
               <AnimatePresence mode="wait">
@@ -276,7 +237,7 @@ export default function ValentineProposal({
               {noClicked && (
                 <motion.span
                   className={`
-                      ${poppins.className} 
+                      font-poppins 
                       absolute top-full left-1 
                       transform -translate-x-1/2 mt-2 
                       bg-[#efcdd0] text-pink-800 
@@ -290,7 +251,7 @@ export default function ValentineProposal({
                   exit={{ opacity: 0, y: 10 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {noMessages[messageIndex]}
+                  {declineMessages[messageIndex]}
                 </motion.span>
               )}
             </AnimatePresence>
