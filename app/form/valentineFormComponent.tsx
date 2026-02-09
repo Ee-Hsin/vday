@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { db } from "@/lib/firebase"
 import { collection, addDoc } from "firebase/firestore"
 import { useRouter } from "next/navigation"
@@ -32,17 +32,25 @@ import { analytics } from "@/lib/firebase"
 import { valentineFormSchema } from "@/schemas/valentineSchema"
 import { compressAndUploadImages } from "@/lib/uploadUtils"
 import { stamps } from "@/lib/constants"
+import ExampleModal from "@/components/ExampleModal"
+import { ValentineProposalProps } from "@/lib/types"
 
 export default function ValentineForm() {
   const [selectedStamp, setSelectedStamp] = useState<string | null>(null)
   const [preview1, setPreview1] = useState<string | null>(null)
   const [preview2, setPreview2] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+  const [previewData, setPreviewData] = useState<
+    Partial<Omit<ValentineProposalProps, "showClickHeartEffect">> | undefined
+  >(undefined)
 
   const router = useRouter()
 
   const form = useForm<z.infer<typeof valentineFormSchema>>({
     resolver: zodResolver(valentineFormSchema),
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
     defaultValues: {
       senderName: "",
       recipientName: "",
@@ -52,6 +60,49 @@ export default function ValentineForm() {
       selectedStamp: "",
     },
   })
+
+  // Cleanup object URLs on unmount
+  useEffect(() => {
+    return () => {
+      if (preview1) URL.revokeObjectURL(preview1)
+      if (preview2) URL.revokeObjectURL(preview2)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  async function handlePreview() {
+    const isValid = await form.trigger()
+    if (!isValid) {
+      return
+    }
+
+    const values = form.getValues()
+
+    // Ensure we have blob URLs for preview even if state somehow got cleared.
+    let imgUrl1 = preview1
+    let imgUrl2 = preview2
+    if (!imgUrl1 && values.image1) {
+      imgUrl1 = URL.createObjectURL(values.image1)
+      setPreview1(imgUrl1)
+    }
+    if (!imgUrl2 && values.image2) {
+      imgUrl2 = URL.createObjectURL(values.image2)
+      setPreview2(imgUrl2)
+    }
+
+    setPreviewData({
+      imgUrl: imgUrl1 || "",
+      imgCaption: values.caption1 || "",
+      imgUrl2: imgUrl2 || "",
+      imgCaption2: values.caption2 || "",
+      valentineName: values.recipientName || "",
+      senderName: values.senderName || "",
+      message: values.message || "",
+      selectedStamp: values.selectedStamp || "stamp1",
+    })
+
+    setIsPreviewOpen(true)
+  }
 
   async function onSubmit(values: z.infer<typeof valentineFormSchema>) {
     setLoading(true)
@@ -224,7 +275,7 @@ export default function ValentineForm() {
                             ))}
                           </div>
                         </FormControl>
-                        <FormMessage className="text-center text-[#ff0000]" />
+                        <FormMessage className="text-center" />
                       </FormItem>
                     )}
                   />
@@ -232,328 +283,374 @@ export default function ValentineForm() {
               </div>
 
               <div className="flex-1 bg-[#E5A4A4] rounded-xl p-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="image1"
-                    render={({ field: { onChange, ...field } }) => (
-                      <div className="bg-white p-3 pb-0 rounded-lg shadow-md w-full h-full grid grid-rows-[auto_1fr_auto] gap-2">
-                        <FormItem className="bg-[#D9D9D9] w-full aspect-square rounded-md relative overflow-hidden">
-                          <div className="w-full h-full aspect-square">
-                            <Image
-                              src={placeholder}
-                              alt="Upload Background"
-                              fill
-                              className="object-cover"
-                            />
-                            <FormControl>
-                              <div className="text-center w-full h-full relative z-10">
-                                <Input
-                                  type="file"
-                                  accept="image/jpeg,image/png,image/jpg"
-                                  onChange={async (e) => {
-                                    const file = e.target.files?.[0] || null
-                                    if (!file) return
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="image1"
+                      render={({ field: { onChange, ...field } }) => (
+                        <div className="bg-white p-3 pb-0 rounded-lg shadow-md w-full h-full grid grid-rows-[auto_1fr_auto] gap-2">
+                          <FormItem className="bg-[#D9D9D9] w-full aspect-square rounded-md relative overflow-hidden">
+                            <div className="w-full h-full aspect-square">
+                              <Image
+                                src={placeholder}
+                                alt="Upload Background"
+                                fill
+                                className="object-cover"
+                              />
+                              <FormControl>
+                                <div className="text-center w-full h-full relative z-10">
+                                  <Input
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/jpg"
+                                    onChange={async (e) => {
+                                      const file = e.target.files?.[0] || null
+                                      if (!file) return
 
-                                    let previewUrl = null
+                                      let previewUrl = null
 
-                                    const validTypes = [
-                                      "image/jpeg",
-                                      "image/png",
-                                      "image/jpg",
-                                    ]
-                                    if (!validTypes.includes(file.type)) {
-                                      form.setError("image1", {
-                                        type: "manual",
-                                        message:
-                                          "File type not supported. Please upload PNG or JPG only.",
-                                      })
-                                      e.target.value = ""
-                                      return
-                                    }
-
-                                    form.clearErrors("image1")
-
-                                    if (
-                                      file.type === "image/heic" ||
-                                      file.name
-                                        .toLowerCase()
-                                        .endsWith(".heic") ||
-                                      file.type === "image/heif" ||
-                                      file.name.toLowerCase().endsWith(".heif")
-                                    ) {
-                                      try {
-                                        const blob = await heic2any({
-                                          blob: file,
-                                          toType: "image/jpeg",
+                                      const validTypes = [
+                                        "image/jpeg",
+                                        "image/png",
+                                        "image/jpg",
+                                      ]
+                                      if (!validTypes.includes(file.type)) {
+                                        form.setError("image1", {
+                                          type: "manual",
+                                          message:
+                                            "File type not supported. Please upload PNG or JPG only.",
                                         })
-                                        const convertedFile = new File(
-                                          [blob as Blob],
-                                          file.name.replace(
-                                            /\.(heic|HEIC|heif|HEIF)$/,
-                                            ".jpg",
-                                          ),
-                                          {
-                                            type: "image/jpeg",
-                                          },
-                                        )
-
-                                        previewUrl =
-                                          URL.createObjectURL(convertedFile)
-                                      } catch (error) {
-                                        console.error(
-                                          "HEIC conversion failed:",
-                                          error,
-                                        )
+                                        e.target.value = ""
+                                        return
                                       }
-                                    } else {
-                                      previewUrl = URL.createObjectURL(file)
-                                    }
 
-                                    onChange(file)
-                                    setPreview1(previewUrl)
-                                  }}
-                                  className="hidden"
-                                  id="image1"
-                                />
-                                <label
-                                  htmlFor="image1"
-                                  className="cursor-pointer w-full h-full flex items-center justify-center"
-                                >
-                                  {preview1 ? (
-                                    <div className="relative w-full h-full">
-                                      <button
-                                        type="button"
-                                        onClick={(e) => {
-                                          e.preventDefault()
-                                          setPreview1(null)
-                                          onChange(null)
-                                        }}
-                                        className="absolute top-0 right-1 bg-[#c7564a] text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#cc0000] transition-colors z-20"
-                                      >
-                                        ×
-                                      </button>
-                                      <img
-                                        src={preview1}
-                                        alt="Preview 1"
-                                        className="w-full h-full object-cover rounded-lg"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="flex items-center justify-center h-40 text-gray-500">
-                                    </div>
-                                  )}
-                                </label>
-                              </div>
+                                      form.clearErrors("image1")
+
+                                      if (
+                                        file.type === "image/heic" ||
+                                        file.name
+                                          .toLowerCase()
+                                          .endsWith(".heic") ||
+                                        file.type === "image/heif" ||
+                                        file.name.toLowerCase().endsWith(".heif")
+                                      ) {
+                                        try {
+                                          const blob = await heic2any({
+                                            blob: file,
+                                            toType: "image/jpeg",
+                                          })
+                                          const convertedFile = new File(
+                                            [blob as Blob],
+                                            file.name.replace(
+                                              /\.(heic|HEIC|heif|HEIF)$/,
+                                              ".jpg",
+                                            ),
+                                            {
+                                              type: "image/jpeg",
+                                            },
+                                          )
+
+                                          previewUrl =
+                                            URL.createObjectURL(convertedFile)
+                                        } catch (error) {
+                                          console.error(
+                                            "HEIC conversion failed:",
+                                            error,
+                                          )
+                                        }
+                                      } else {
+                                        previewUrl = URL.createObjectURL(file)
+                                      }
+
+                                      // Revoke old URL if it exists
+                                      if (preview1) {
+                                        URL.revokeObjectURL(preview1)
+                                      }
+
+                                      onChange(file)
+                                      setPreview1(previewUrl)
+                                    }}
+                                    className="hidden"
+                                    id="image1"
+                                  />
+                                  <label
+                                    htmlFor="image1"
+                                    className="cursor-pointer w-full h-full flex items-center justify-center"
+                                  >
+                                    {preview1 ? (
+                                      <div className="relative w-full h-full">
+                                        <button
+                                          type="button"
+                                          onClick={(e) => {
+                                            e.preventDefault()
+                                            if (preview1) {
+                                              URL.revokeObjectURL(preview1)
+                                            }
+                                            setPreview1(null)
+                                            onChange(null)
+                                          }}
+                                          className="absolute top-1 right-1 bg-[#c7564a] text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#cc0000] transition-colors z-20"
+                                        >
+                                          ×
+                                        </button>
+                                        <img
+                                          src={preview1}
+                                          alt="Preview 1"
+                                          className="w-full h-full object-cover rounded-lg"
+                                        />
+                                      </div>
+                                    ) : (
+                                      <div className="flex items-center justify-center h-40 text-gray-500">
+                                      </div>
+                                    )}
+                                  </label>
+                                </div>
+                              </FormControl>
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                          <div className="flex items-center justify-center">
+                            <span className="text-gray-400 text-sm text-center">
+                              Photo 1 <br className="md:hidden" /> Upload
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="caption1"
+                      render={({ field }) => (
+                        <FormItem className="rounded-xl overflow-hidden flex flex-col h-full space-y-0">
+                          <div className="bg-[#edd9d9] flex justify-center items-center h-[100px] rounded-t-xl">
+                            <Image
+                              src={mofuFlower}
+                              alt="Mofu Flower"
+                              width={130}
+                              height={130}
+                              className="object-contain mt-4"
+                            />
+                          </div>
+                          <div className="bg-white p-4 border-8 border-[#fff4f4] rounded-b-xl flex-1">
+                            <FormControl>
+                              <Textarea
+                                placeholder="Photo 1 Caption"
+                                {...field}
+                                className="bg-transparent border-none text-sm md:text-sm min-h-[4rem] max-h-[4rem] overflow-y-auto resize-none p-0"
+                              />
                             </FormControl>
                           </div>
-                          <FormMessage />
                         </FormItem>
-                        <div className="flex items-center justify-center">
-                          <span className="text-gray-400 text-sm text-center">
-                            Photo 1 <br className="md:hidden" /> Upload
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  />
+                      )}
+                    />
+                  </div>
+                  {form.formState.errors.caption1 && (
+                    <p className="text-sm font-medium text-destructive mt-1">
+                      {form.formState.errors.caption1.message}
+                    </p>
+                  )}
 
-                  <FormField
-                    control={form.control}
-                    name="caption1"
-                    render={({ field }) => (
-                      <FormItem className="rounded-xl overflow-hidden flex flex-col h-full space-y-0">
-                        <div className="bg-[#edd9d9] flex justify-center items-center h-[100px] rounded-t-xl">
-                          <Image
-                            src={mofuFlower}
-                            alt="Mofu Flower"
-                            width={130}
-                            height={130}
-                            className="object-contain mt-4"
-                          />
-                        </div>
-                        <div className="bg-white p-4 border-8 border-[#fff4f4] rounded-b-xl flex-1">
-                          <FormControl>
-                            <Textarea
-                              placeholder="Photo 1 Caption"
-                              {...field}
-                              className="bg-transparent border-none text-sm md:text-sm min-h-[4rem] max-h-[4rem] overflow-y-auto resize-none p-0"
-                            />
-                          </FormControl>
-                        </div>
-                        <FormMessage className="mt-2" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="caption2"
-                    render={({ field }) => (
-                      <FormItem className="rounded-xl overflow-hidden flex flex-col space-y-0">
-                        <div className="bg-[#edd9d9] flex justify-center items-center h-[100px] rounded-t-xl">
-                          <Image
-                            src={mofuHeart}
-                            alt="Mofu Heart"
-                            width={130}
-                            height={130}
-                            className="object-cover mt-4"
-                          />
-                        </div>
-                        <div className="bg-white p-4 border-8 border-[#fff4f4] rounded-b-xl flex-1">
-                          <FormControl>
-                            <Textarea
-                              placeholder="Photo 2 Caption"
-                              {...field}
-                              className="bg-transparent border-none text-sm min-h-[4rem] max-h-[4rem] overflow-y-auto resize-none p-0"
-                            />
-                          </FormControl>
-                        </div>
-                        <FormMessage className="mt-2" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="image2"
-                    render={({ field: { onChange, ...field } }) => (
-                      <div className="bg-white p-3 pb-0 rounded-lg shadow-md w-full h-full grid grid-rows-[auto_1fr_auto] gap-2">
-                        <FormItem className="bg-[#D9D9D9] w-full aspect-square rounded-md relative overflow-hidden">
-                          <div className="w-full h-full aspect-square">
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="caption2"
+                      render={({ field }) => (
+                        <FormItem className="rounded-xl overflow-hidden flex flex-col space-y-0">
+                          <div className="bg-[#edd9d9] flex justify-center items-center h-[100px] rounded-t-xl">
                             <Image
-                              src={placeholder}
-                              alt="Upload Background"
-                              fill
-                              className="object-cover"
+                              src={mofuHeart}
+                              alt="Mofu Heart"
+                              width={130}
+                              height={130}
+                              className="object-cover mt-4"
                             />
+                          </div>
+                          <div className="bg-white p-4 border-8 border-[#fff4f4] rounded-b-xl flex-1">
                             <FormControl>
-                              <div className="text-center w-full h-full relative z-10">
-                                <Input
-                                  type="file"
-                                  accept="image/jpeg,image/png,image/jpg"
-                                  onChange={async (e) => {
-                                    const file = e.target.files?.[0] || null
-                                    if (!file) return
-
-                                    let previewUrl = null
-
-                                    const validTypes = [
-                                      "image/jpeg",
-                                      "image/png",
-                                      "image/jpg",
-                                    ]
-                                    if (!validTypes.includes(file.type)) {
-                                      form.setError("image2", {
-                                        type: "manual",
-                                        message:
-                                          "File type not supported. Please upload PNG or JPG only.",
-                                      })
-                                      e.target.value = ""
-                                      return
-                                    }
-
-                                    form.clearErrors("image2")
-
-                                    if (
-                                      file.type === "image/heic" ||
-                                      file.name
-                                        .toLowerCase()
-                                        .endsWith(".heic") ||
-                                      file.type === "image/heif" ||
-                                      file.name.toLowerCase().endsWith(".heif")
-                                    ) {
-                                      try {
-                                        const blob = await heic2any({
-                                          blob: file,
-                                          toType: "image/jpeg",
-                                        })
-                                        const convertedFile = new File(
-                                          [blob as Blob],
-                                          file.name.replace(
-                                            /\.(heic|HEIC|heif|HEIF)$/,
-                                            ".jpg",
-                                          ),
-                                          {
-                                            type: "image/jpeg",
-                                          },
-                                        )
-
-                                        previewUrl =
-                                          URL.createObjectURL(convertedFile)
-                                      } catch (error) {
-                                        console.error(
-                                          "HEIC conversion failed:",
-                                          error,
-                                        )
-                                      }
-                                    } else {
-                                      previewUrl = URL.createObjectURL(file)
-                                    }
-
-                                    onChange(file)
-                                    setPreview2(previewUrl)
-                                  }}
-                                  className="hidden"
-                                  id="image2"
-                                />
-                                <label
-                                  htmlFor="image2"
-                                  className="cursor-pointer w-full h-full flex items-center justify-center"
-                                >
-                                  {preview2 ? (
-                                    <div className="relative w-full h-full aspect-square">
-                                      <button
-                                        type="button"
-                                        onClick={(e) => {
-                                          e.preventDefault()
-                                          setPreview2(null)
-                                          onChange(null)
-                                        }}
-                                        className="absolute top-1 right-1 bg-[#c7564a] text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#cc0000] transition-colors z-20"
-                                      >
-                                        ×
-                                      </button>
-                                      <img
-                                        src={preview2}
-                                        alt="Preview 2"
-                                        className="w-full h-full object-cover rounded-lg"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="flex items-center justify-center h-40 text-gray-500">
-                                    </div>
-                                  )}
-                                </label>
-                              </div>
+                              <Textarea
+                                placeholder="Photo 2 Caption"
+                                {...field}
+                                className="bg-transparent border-none text-sm min-h-[4rem] max-h-[4rem] overflow-y-auto resize-none p-0"
+                              />
                             </FormControl>
                           </div>
-                          <FormMessage />
                         </FormItem>
-                        <div className="flex items-center justify-center">
-                          <span className="text-gray-400 text-sm text-center">
-                            Photo 2 <br className="md:hidden" /> Upload
-                          </span>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="image2"
+                      render={({ field: { onChange, ...field } }) => (
+                        <div className="bg-white p-3 pb-0 rounded-lg shadow-md w-full h-full grid grid-rows-[auto_1fr_auto] gap-2">
+                          <FormItem className="bg-[#D9D9D9] w-full aspect-square rounded-md relative overflow-hidden">
+                            <div className="w-full h-full aspect-square">
+                              <Image
+                                src={placeholder}
+                                alt="Upload Background"
+                                fill
+                                className="object-cover"
+                              />
+                              <FormControl>
+                                <div className="text-center w-full h-full relative z-10">
+                                  <Input
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/jpg"
+                                    onChange={async (e) => {
+                                      const file = e.target.files?.[0] || null
+                                      if (!file) return
+
+                                      let previewUrl = null
+
+                                      const validTypes = [
+                                        "image/jpeg",
+                                        "image/png",
+                                        "image/jpg",
+                                      ]
+                                      if (!validTypes.includes(file.type)) {
+                                        form.setError("image2", {
+                                          type: "manual",
+                                          message:
+                                            "File type not supported. Please upload PNG or JPG only.",
+                                        })
+                                        e.target.value = ""
+                                        return
+                                      }
+
+                                      form.clearErrors("image2")
+
+                                      if (
+                                        file.type === "image/heic" ||
+                                        file.name
+                                          .toLowerCase()
+                                          .endsWith(".heic") ||
+                                        file.type === "image/heif" ||
+                                        file.name.toLowerCase().endsWith(".heif")
+                                      ) {
+                                        try {
+                                          const blob = await heic2any({
+                                            blob: file,
+                                            toType: "image/jpeg",
+                                          })
+                                          const convertedFile = new File(
+                                            [blob as Blob],
+                                            file.name.replace(
+                                              /\.(heic|HEIC|heif|HEIF)$/,
+                                              ".jpg",
+                                            ),
+                                            {
+                                              type: "image/jpeg",
+                                            },
+                                          )
+
+                                          previewUrl =
+                                            URL.createObjectURL(convertedFile)
+                                        } catch (error) {
+                                          console.error(
+                                            "HEIC conversion failed:",
+                                            error,
+                                          )
+                                        }
+                                      } else {
+                                        previewUrl = URL.createObjectURL(file)
+                                      }
+
+                                      // Revoke old URL if it exists
+                                      if (preview2) {
+                                        URL.revokeObjectURL(preview2)
+                                      }
+
+                                      onChange(file)
+                                      setPreview2(previewUrl)
+                                    }}
+                                    className="hidden"
+                                    id="image2"
+                                  />
+                                  <label
+                                    htmlFor="image2"
+                                    className="cursor-pointer w-full h-full flex items-center justify-center"
+                                  >
+                                    {preview2 ? (
+                                      <div className="relative w-full h-full aspect-square">
+                                        <button
+                                          type="button"
+                                          onClick={(e) => {
+                                            e.preventDefault()
+                                            if (preview2) {
+                                              URL.revokeObjectURL(preview2)
+                                            }
+                                            setPreview2(null)
+                                            onChange(null)
+                                          }}
+                                          className="absolute top-1 right-1 bg-[#c7564a] text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-[#cc0000] transition-colors z-20"
+                                        >
+                                          ×
+                                        </button>
+                                        <img
+                                          src={preview2}
+                                          alt="Preview 2"
+                                          className="w-full h-full object-cover rounded-lg"
+                                        />
+                                      </div>
+                                    ) : (
+                                      <div className="flex items-center justify-center h-40 text-gray-500">
+                                      </div>
+                                    )}
+                                  </label>
+                                </div>
+                              </FormControl>
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                          <div className="flex items-center justify-center">
+                            <span className="text-gray-400 text-sm text-center">
+                              Photo 2 <br className="md:hidden" /> Upload
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  />
+                      )}
+                    />
+                  </div>
+                  {form.formState.errors.caption2 && (
+                    <p className="text-sm font-medium text-destructive mt-1">
+                      {form.formState.errors.caption2.message}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-center pb-6 md:pb-0">
+            <div className="flex justify-center gap-4 pb-6 md:pb-0">
               <Button
-                type="submit"
-                className={`bg-[#E5A4A4] hover:bg-[#d98f8f] text-white text-xl px-8 py-2 rounded-3xl h-[60px]  font-fredoka`}
+                type="button"
+                onClick={handlePreview}
+                className={`bg-[#E5A4A4] hover:bg-[#d98f8f] text-white text-xl px-8 py-2 rounded-3xl h-[60px] font-fredoka`}
                 disabled={loading}
               >
-                {loading ? "Submitting..." : "Generate Website"}
+                Preview
+              </Button>
+              <Button
+                type="submit"
+                className={`bg-[#E5A4A4] hover:bg-[#d98f8f] text-white text-xl px-8 py-2 rounded-3xl h-[60px] font-fredoka`}
+                disabled={loading}
+              >
+                {loading ? "Submitting..." : "Generate"}
               </Button>
             </div>
           </form>
         </Form>
       </div>
+      <ExampleModal
+        isOpen={isPreviewOpen}
+        onClose={() => {
+          setIsPreviewOpen(false)
+          setPreviewData(undefined)
+        }}
+        url="https://www.valentineproposal.com/preview"
+        isClickable={false}
+        valentineData={previewData}
+      />
     </div>
   )
 }

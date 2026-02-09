@@ -19,9 +19,8 @@ export const valentineFormSchema = z
     },
   )
   .refine((data) => (data.caption1 ? !!data.image1 : true), {
-    message:
-      "You wrote a caption for your first image but forgot to upload the image!",
-    path: ["image1"],
+    message: "You forgot to add a photo for your first caption!",
+    path: ["caption1"],
   })
   .refine(
     (data) => (data.image2 ? (data.caption2 ?? "").trim().length > 0 : true),
@@ -31,9 +30,8 @@ export const valentineFormSchema = z
     },
   )
   .refine((data) => (data.caption2 ? !!data.image2 : true), {
-    message:
-      "You wrote a caption for your second image but forgot to upload the image!",
-    path: ["image2"],
+    message: "You forgot to add a photo for your second caption!",
+    path: ["caption2"],
   })
 
 export type ValentineFormValues = z.infer<typeof valentineFormSchema>
