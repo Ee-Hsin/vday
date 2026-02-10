@@ -5,12 +5,10 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Form, FormField } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { db } from "@/lib/firebase"
 import { collection, addDoc } from "firebase/firestore"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { MdHome } from "react-icons/md"
 import mofuFlower from "../../assets/mofu flower crop.png"
 import mofuHeart from "../../assets/mofu heart crop.png"
 import ClickHeartEffect from "@/components/ClickHeartEffect"
@@ -26,11 +24,16 @@ import { TextInputSection } from "@/components/form/TextInputSection"
 import { StampSelector } from "@/components/form/StampSelector"
 import { ImageUploadField } from "@/components/form/ImageUploadField"
 import { CaptionField } from "@/components/form/CaptionField"
+import HomeButton from "@/components/HomeButton"
 
 export default function ValentineForm() {
   const [selectedStamp, setSelectedStamp] = useState<string | null>(null)
+
   const [preview1, setPreview1] = useState<string | null>(null)
   const [preview2, setPreview2] = useState<string | null>(null)
+
+  const previewsRef = useRef({ preview1, preview2 })
+
   const [loading, setLoading] = useState(false)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [previewData, setPreviewData] = useState<
@@ -53,11 +56,19 @@ export default function ValentineForm() {
     },
   })
 
-  // Cleanup object URLs on unmount
+  useEffect(() => {
+    previewsRef.current = { preview1, preview2 }
+  }, [preview1, preview2])
+
+  // ensure cleanup object URLs on unmount
   useEffect(() => {
     return () => {
-      if (preview1) URL.revokeObjectURL(preview1)
-      if (preview2) URL.revokeObjectURL(preview2)
+      if (previewsRef.current.preview1) {
+        URL.revokeObjectURL(previewsRef.current.preview1)
+      }
+      if (previewsRef.current.preview2) {
+        URL.revokeObjectURL(previewsRef.current.preview2)
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -75,13 +86,13 @@ export default function ValentineForm() {
           `input[name="${firstErrorField}"]`,
           `textarea[name="${firstErrorField}"]`,
         ]
-        
+
         let errorElement: Element | null = null
         for (const selector of selectors) {
           errorElement = document.querySelector(selector)
           if (errorElement) break
         }
-        
+
         // If we found an element, scroll to it
         if (errorElement) {
           errorElement.scrollIntoView({ behavior: "smooth", block: "center" })
@@ -98,7 +109,6 @@ export default function ValentineForm() {
 
     const values = form.getValues()
 
-    // Ensure we have blob URLs for preview even if state somehow got cleared.
     let imgUrl1 = preview1
     let imgUrl2 = preview2
     if (!imgUrl1 && values.image1) {
@@ -176,128 +186,127 @@ export default function ValentineForm() {
     }
   }
 
+  const FormContent = (
+    <div className="container mx-auto px-4 max-w-4xl pt-20 md:pt-0 z-10">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="flex-1 bg-[#E5A4A4] rounded-xl p-6 space-y-4">
+              <TextInputSection control={form.control} />
+              <StampSelector
+                selectedStamp={selectedStamp}
+                onStampSelect={(stampId) => {
+                  setSelectedStamp(stampId)
+                  form.setValue("selectedStamp", stampId)
+                }}
+                control={form.control}
+                stamps={stamps}
+              />
+            </div>
+
+            <div className="flex-1 bg-[#E5A4A4] rounded-xl p-6">
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="image1"
+                    render={({ field: { onChange, ...field } }) => (
+                      <ImageUploadField
+                        name="image1"
+                        label={
+                          <>
+                            Photo 1 <br className="md:hidden" /> Upload
+                          </>
+                        }
+                        preview={preview1}
+                        onPreviewChange={setPreview1}
+                        form={form}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+
+                  <CaptionField
+                    name="caption1"
+                    placeholder="Photo 1 Caption"
+                    decorativeImage={mofuFlower}
+                    imageAlt="Mofu Flower"
+                    control={form.control}
+                  />
+                </div>
+                {form.formState.errors.caption1 && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {form.formState.errors.caption1.message}
+                  </p>
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <CaptionField
+                    name="caption2"
+                    placeholder="Photo 2 Caption"
+                    decorativeImage={mofuHeart}
+                    imageAlt="Mofu Heart"
+                    control={form.control}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="image2"
+                    render={({ field: { onChange, ...field } }) => (
+                      <ImageUploadField
+                        name="image2"
+                        label={
+                          <>
+                            Photo 2 <br className="md:hidden" /> Upload
+                          </>
+                        }
+                        preview={preview2}
+                        onPreviewChange={setPreview2}
+                        form={form}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                </div>
+                {form.formState.errors.caption2 && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {form.formState.errors.caption2.message}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-center gap-6 pb-6 md:pb-0">
+            <Button
+              type="button"
+              onClick={handlePreview}
+              className={`bg-[#E5A4A4] hover:bg-[#d98f8f] text-white text-xl py-2 rounded-3xl h-[60px] font-fredoka w-[150px]`}
+              disabled={loading}
+            >
+              Preview
+            </Button>
+            <Button
+              type="submit"
+              className={`bg-[#E5A4A4] hover:bg-[#d98f8f] text-white text-xl px-8 py-2 rounded-3xl h-[60px] font-fredoka w-[150px]`}
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Generate"}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
+  )
+
   return (
     <div
       className={`min-h-svh flex items-center justify-center bg-[#ffeded] font-poppins`}
     >
       <HeartBackground />
       <ClickHeartEffect />
-      <Link
-        href="/"
-        className="absolute top-5 left-5 z-20 text-[#d98f8f] hover:text-[#b35151] transition-colors"
-      >
-        <MdHome className="w-[4svh] h-[4svh] md:w-[40px] md:h-[40px]" />
-      </Link>
-      <div className="container mx-auto px-4 max-w-4xl pt-20 md:pt-0 z-10">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="flex-1 bg-[#E5A4A4] rounded-xl p-6 space-y-4">
-                <TextInputSection control={form.control} />
-                <StampSelector
-                  selectedStamp={selectedStamp}
-                  onStampSelect={(stampId) => {
-                    setSelectedStamp(stampId)
-                    form.setValue("selectedStamp", stampId)
-                  }}
-                  control={form.control}
-                  stamps={stamps}
-                />
-              </div>
-
-              <div className="flex-1 bg-[#E5A4A4] rounded-xl p-6">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="image1"
-                      render={({ field: { onChange, ...field } }) => (
-                        <ImageUploadField
-                          name="image1"
-                          label={
-                            <>
-                              Photo 1 <br className="md:hidden" /> Upload
-                            </>
-                          }
-                          preview={preview1}
-                          onPreviewChange={setPreview1}
-                          form={form}
-                          onChange={onChange}
-                        />
-                      )}
-                    />
-
-                    <CaptionField
-                      name="caption1"
-                                placeholder="Photo 1 Caption"
-                      decorativeImage={mofuFlower}
-                      imageAlt="Mofu Flower"
-                      control={form.control}
-                    />
-                  </div>
-                  {form.formState.errors.caption1 && (
-                    <p className="text-sm font-medium text-destructive mt-1">
-                      {form.formState.errors.caption1.message}
-                    </p>
-                  )}
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <CaptionField
-                      name="caption2"
-                                placeholder="Photo 2 Caption"
-                      decorativeImage={mofuHeart}
-                      imageAlt="Mofu Heart"
-                      control={form.control}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="image2"
-                      render={({ field: { onChange, ...field } }) => (
-                        <ImageUploadField
-                          name="image2"
-                          label={
-                            <>
-                              Photo 2 <br className="md:hidden" /> Upload
-                            </>
-                          }
-                          preview={preview2}
-                          onPreviewChange={setPreview2}
-                          form={form}
-                          onChange={onChange}
-                        />
-                      )}
-                    />
-                  </div>
-                  {form.formState.errors.caption2 && (
-                    <p className="text-sm font-medium text-destructive mt-1">
-                      {form.formState.errors.caption2.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-center gap-6 pb-6 md:pb-0">
-              <Button
-                type="button"
-                onClick={handlePreview}
-                className={`bg-[#E5A4A4] hover:bg-[#d98f8f] text-white text-xl py-2 rounded-3xl h-[60px] font-fredoka w-[150px]`}
-                disabled={loading}
-              >
-                Preview
-              </Button>
-              <Button
-                type="submit"
-                className={`bg-[#E5A4A4] hover:bg-[#d98f8f] text-white text-xl px-8 py-2 rounded-3xl h-[60px] font-fredoka w-[150px]`}
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : "Generate"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
+      <HomeButton />
+      {FormContent}
       <ExampleModal
         isOpen={isPreviewOpen}
         onClose={() => {
@@ -306,6 +315,7 @@ export default function ValentineForm() {
         }}
         url="https://www.valentineproposal.com/preview"
         isClickable={false}
+        isPreviewMode={true}
         valentineData={previewData}
       />
     </div>
