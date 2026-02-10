@@ -95,9 +95,7 @@ export function ImageUploadField({
         <FormMessage />
       </FormItem>
       <div className="flex items-center justify-center">
-        <span className="text-gray-400 text-sm text-center">
-          {label}
-        </span>
+        <span className="text-gray-400 text-sm text-center">{label}</span>
       </div>
     </div>
   )
