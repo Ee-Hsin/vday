@@ -62,7 +62,7 @@ The app will be available at `http://localhost:3000`
 
 ---
 
-This poject was updated for Valentine’s Day 2026 by:
+This project was updated for Valentine’s Day 2026 by:
 - [Jordan Kok](https://github.com/Ee-Hsin)
 - [Brian Zhang](https://github.com/brianzhangdev)
 - [Patrick Huang](https://github.com/patrickxhuang)
