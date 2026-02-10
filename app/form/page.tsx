@@ -1,7 +1,5 @@
-import dynamic from "next/dynamic"
+import ValentineForm from "./valentineFormComponent"
 
-const ValentineForm = dynamic(() => import("./valentineFormComponent"), {
-  ssr: false,
-})
-
-export default ValentineForm
+export default function ValentineFormPage () {
+  return <ValentineForm/>
+}
