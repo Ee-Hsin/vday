@@ -1,5 +1,6 @@
 "use client"
 
+import { useRef } from "react"
 import { UseFormReturn } from "react-hook-form"
 import Image from "next/image"
 import { FormControl, FormItem, FormMessage } from "@/components/ui/form"
@@ -24,6 +25,7 @@ export function ImageUploadField({
   form,
   onChange,
 }: ImageUploadFieldProps) {
+  const inputRef = useRef<HTMLInputElement>(null)
   const { handleImageChange } = useImageFileHandler({
     form,
     fieldName: name,
@@ -44,6 +46,7 @@ export function ImageUploadField({
           <FormControl>
             <div className="text-center w-full h-full relative z-10">
               <Input
+                ref={inputRef}
                 type="file"
                 accept="image/jpeg,image/png,image/jpg"
                 onChange={async (e) => {
@@ -65,6 +68,9 @@ export function ImageUploadField({
                         e.preventDefault()
                         if (preview) {
                           URL.revokeObjectURL(preview)
+                        }
+                        if (inputRef.current) {
+                          inputRef.current.value = ""
                         }
                         onPreviewChange(null)
                         onChange(null)
