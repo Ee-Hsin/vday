@@ -1,30 +1,33 @@
-# 💘 valentineproposal.com 💘
+# valentineproposal.com
 
-A customizable digital Valentine’s Day card for when a DM just isn’t enough.  
-Built with ❤️ by [Brian Zhang](https://github.com/brianzhangdev), [Patrick Huang](https://github.com/patrickxhuang), and [Jordan Kok](https://github.com/Ee-Hsin).
+Because a DM just isn’t enough.  
+
+Built with love by [Brian Zhang](https://github.com/brianzhangdev), [Patrick Huang](https://github.com/patrickxhuang), [Jordan Kok](https://github.com/Ee-Hsin), [Rita Xiang](https://github.com/ritaxiang), and [Anna Wei](https://github.com/weivvvs) 💕.
 
 ![image](https://github.com/user-attachments/assets/ee02e6c3-a26f-43c2-9206-b10bb521619c)
 ![image](https://github.com/user-attachments/assets/2e1dd4e7-bad2-474b-9a0c-3c3edccc5e00)
 ![image](https://github.com/user-attachments/assets/33c5baf5-c33c-4212-b307-345a97393868)
 
 
-## ✨ What is this?
+## THE method for a proposal made personal
 
-A playful, heartfelt web app to help you pop the question:  
+Helping you ask your special someone... 
 **"Will you be my Valentine?"**
 
-Create a beautiful digital card in seconds — just fill in:
-- 📬 Their name  
-- 📝 A heartfelt message  
-- 📸 Up to two images of your choice  
+Create your own digital card in seconds by filling in:
+- Their name  
+- A message  
+- Up to two pictures of your choice  
 
-We’ll generate a personalized card just for them, complete with its own shareable link. It’s sweet, stylish, and just a little extra (in the best way).
+And we'll generate your card just for them, complete with its own shareable link.
 
-> 💖 Try it out at [valentineproposal.com](https://valentineproposal.com)
+Now, you can also secure your envelope with a secret with our new password feature 🤫 .
+
+> Try it out at [valentineproposal.com](https://valentineproposal.com) !
 
 ---
 
-## 🚨 Tech Stack
+## Tech Stack
 
 - **Frontend**: Next.js
 - **Backend & Hosting**: Firebase
@@ -34,7 +37,7 @@ We’ll generate a personalized card just for them, complete with its own sharea
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 Clone the repo:
 
@@ -59,7 +62,12 @@ The app will be available at `http://localhost:3000`
 
 ---
 
-## 🙌 Credits
+This poject was updated for Valentine’s Day 2026 by:
+- [Jordan Kok](https://github.com/Ee-Hsin)
+- [Brian Zhang](https://github.com/brianzhangdev)
+- [Patrick Huang](https://github.com/patrickxhuang)
+- [Rita Xiang](https://github.com/ritaxiang)
+- [Anna Wei](https://github.com/weivvvs)
 
 This project was built for Valentine’s Day 2025 by:
 - [Jordan Kok](https://github.com/Ee-Hsin)
