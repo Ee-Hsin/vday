@@ -1,5 +1,4 @@
 import { UseFormReturn } from "react-hook-form"
-import heic2any from "heic2any"
 
 interface UseImageFileHandlerOptions {
   form: UseFormReturn<any>
@@ -8,12 +7,20 @@ interface UseImageFileHandlerOptions {
   currentPreview: string | null
 }
 
+interface UseImageFileHandlerReturn {
+  handleImageChange: (
+    file: File | null,
+    onChange: (file: File | null) => void,
+    inputElement?: HTMLInputElement | (EventTarget & HTMLInputElement),
+  ) => Promise<void>
+}
+
 export function useImageFileHandler({
   form,
   fieldName,
   onPreviewChange,
   currentPreview,
-}: UseImageFileHandlerOptions) {
+}: UseImageFileHandlerOptions): UseImageFileHandlerReturn {
   const handleImageChange = async (
     file: File | null,
     onChange: (file: File | null) => void,
@@ -44,6 +51,8 @@ export function useImageFileHandler({
       file.name.toLowerCase().endsWith(".heif")
     ) {
       try {
+        const heic2any = (await import("heic2any")).default
+
         const blob = await heic2any({
           blob: file,
           toType: "image/jpeg",

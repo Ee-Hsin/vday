@@ -11,6 +11,7 @@ interface ExampleModalProps {
   onClose: () => void
   url?: string
   isClickable?: boolean
+  isPreviewMode? : boolean
   valentineData?: Partial<Omit<ValentineProposalProps, "showClickHeartEffect">>
 }
 
@@ -19,12 +20,12 @@ export default function ExampleModal({
   onClose, 
   url,
   isClickable = true,
+  isPreviewMode = false,
   valentineData 
 }: ExampleModalProps) {
   const [isMaximized, setIsMaximized] = useState(false)
   const [key, setKey] = useState(0)
   const mockUrl = url || "https://www.valentineproposal.com/example"
-  const isCustomPreview = valentineData !== undefined
 
   const handleReload = () => {
     setKey(prev => prev + 1)
@@ -94,7 +95,7 @@ export default function ExampleModal({
                   ? 'scale-100' 
                   : 'scale-[0.8] md:scale-[0.9]'
               } transition-transform`}>
-                {isCustomPreview ? (
+                {isPreviewMode ? (
                   <ValentineProposal
                     imgUrl={valentineData?.imgUrl ?? ""}
                     imgCaption={valentineData?.imgCaption ?? ""}

@@ -6,6 +6,7 @@ import ClickHeartEffect from "@/components/ClickHeartEffect"
 import SuccessClient from "@/components/SuccessClient"
 import pcBg from "@/assets/mofu yay pc.png"
 import mobileBg from "@/assets/mofu yay mobile longer.png"
+import HomeButton from "@/components/HomeButton"
 
 interface PageProps {
   searchParams: { [key: string]: string | string[] | undefined }
@@ -20,13 +21,7 @@ export default function SuccessPage({ searchParams }: PageProps) {
     <div className="h-svh relative bg-[#ffeded] overflow-hidden">
       <HeartBackground />
       <ClickHeartEffect />
-
-      <Link
-        href="/"
-        className="absolute top-5 left-5 z-20 text-[#d98f8f] hover:text-[#b35151] transition-colors"
-      >
-        <MdHome className="w-[4svh] h-[4svh] md:w-[40px] md:h-[40px]" />
-      </Link>
+      <HomeButton />
 
       <div className="relative z-10 mt-[5svh] md:mt-[80px] md:ml-[5vw] text-center md:text-center md:w-[46vw]">
         <h1 className="text-[14vw] leading-[1] md:text-8xl py-1 font-bold text-[#d98f8f] mb-[4svh] md:mb-[4svh] font-fredoka">
