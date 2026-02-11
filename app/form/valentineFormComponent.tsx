@@ -76,6 +76,11 @@ export default function ValentineForm() {
   async function handlePreview() {
     const isValid = await form.trigger()
     if (!isValid) {
+
+        if (analytics) {
+        logEvent(analytics, "preview_clicked", { button_name: "preview" })
+      }
+
       // Scroll to first error field, similar to form.handleSubmit behavior
       const firstErrorField = Object.keys(form.formState.errors)[0]
       if (firstErrorField) {
