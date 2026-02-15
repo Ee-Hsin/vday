@@ -24,12 +24,15 @@ export default async function CardPage({ params }: PageProps) {
         cardData = {
           valentineName: data.recipientName || "",
           senderName: data.senderName || "",
+          proposalMessage: data.proposalMessage || "",
+          successImageURL: data.successImageURL || null,
           message: data.message || "",
           imgUrl: data.image1URL || null,
           imgCaption: data.caption1 || "",
           imgUrl2: data.image2URL || null,
           imgCaption2: data.caption2 || "",
           selectedStamp: data.selectedStamp || "stamp1",
+          selectedTheme: data.selectedTheme || "pinkTheme",
         }
       }
     } else {
@@ -58,7 +61,9 @@ export default async function CardPage({ params }: PageProps) {
         valentineName={cardData.valentineName}
         senderName={cardData.senderName}
         message={cardData.message}
+        proposalMessage={cardData.proposalMessage}
         selectedStamp={cardData.selectedStamp || "stamp1"}
+        selectedTheme={cardData.selectedTheme || "pinkTheme"}
       />
     </>
   )

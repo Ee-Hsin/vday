@@ -6,6 +6,9 @@ export interface ValentineProposalProps {
   valentineName: string
   senderName: string
   message: string
+  proposalMessage?: string
+  successImageURL?: string
   selectedStamp?: string
+  selectedTheme?: string
   showClickHeartEffect?: boolean
 }

@@ -61,6 +61,15 @@ module.exports = {
           500: "#FF69B4",
           600: "#FF1493",
         },
+        theme: {
+          cover: "var(--theme-cover)", // For the envelope/card background
+          text: "var(--theme-text)", // For the proposal text
+          btn: {
+            DEFAULT: "var(--theme-btn)", // For the Yes button
+            hover: "var(--theme-btn-hover)", // For the Yes button hover state
+          },
+          decline: "var(--theme-decline)", // For the decline message background
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

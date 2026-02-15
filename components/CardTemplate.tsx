@@ -16,7 +16,7 @@ import stamp2 from "@/assets/stamp 2.png"
 import stamp3 from "@/assets/stamp 3.png"
 import stampFrame from "@/assets/square stamp frame.png"
 import Image from "next/image"
-import { declineMessages } from "@/lib/constants"
+import { declineMessages, colourThemes } from "@/lib/constants"
 import { ValentineProposalProps } from "@/lib/types"
 
 export default function ValentineProposal({
@@ -27,7 +27,10 @@ export default function ValentineProposal({
   valentineName,
   senderName,
   message,
+  proposalMessage,
+  successImageURL,
   selectedStamp = "stamp1",
+  selectedTheme = "pinkTheme",
   showClickHeartEffect = true,
 }: ValentineProposalProps) {
   const [showModal, setShowModal] = useState(false)
@@ -89,9 +92,20 @@ export default function ValentineProposal({
     }
   }, [noClicked])
 
+  const theme = colourThemes[selectedTheme as keyof typeof colourThemes]
+
   return (
     <div
       className="min-h-svh min-w-[100svw] bg-[#ffeded] flex flex-col items-center justify-center p-4 overflow-hidden relative"
+      style={
+        {
+          "--theme-cover": theme.cover,
+          "--theme-text": theme.text,
+          "--theme-btn": theme.btn,
+          "--theme-btn-hover": theme.btnHover,
+          "--theme-decline": theme.decline,
+        } as React.CSSProperties
+      }
       onMouseMove={handleMouseMove}
     >
       {showClickHeartEffect && <ClickHeartEffect />}
@@ -100,12 +114,11 @@ export default function ValentineProposal({
       <AnimatePresence>
         {!isEnvelopeOpen && (
           <motion.div
-            className="absolute bg-[#d98f8f] rounded-lg shadow-xl cursor-pointer z-20 
-              w-[calc(90vw+6px)] h-[500px] 
-              md:max-w-[756px] md:h-[506px]
-              flex flex-col items-center justify-center
-              transition-shadow duration-300
-              hover:shadow-[0_0px_50px_-5px_rgba(204,75,96,0.6)]"
+            className={`absolute bg-theme-cover rounded-lg shadow-xl cursor-pointer z-20 
+            w-[calc(90vw+6px)] h-[500px] 
+            md:max-w-[756px] md:h-[506px]
+            flex flex-col items-center justify-center
+            transition-shadow duration-300`}
             initial={{ y: 0 }}
             exit={{ y: "150%", transition: { duration: 0.5, ease: "easeIn" } }}
             onClick={() => setIsEnvelopeOpen(true)}
@@ -148,9 +161,9 @@ export default function ValentineProposal({
           bg-[#ffffff] rounded-lg shadow-lg p-8 flex flex-col items-center z-10 justify-between"
       >
         <h1
-          className={`font-fredoka text-3xl md:text-4xl font-bold text-[#cd7b7b] text-center flex items-center justify-center`}
+          className={`font-fredoka text-3xl md:text-4xl font-bold text-theme-text text-center flex items-center justify-center`}
         >
-          Hi {valentineName}, will you be my Valentine?
+          {proposalMessage || `Hi ${valentineName}, will you be my Valentine?`}
         </h1>
 
         <div className="relative w-full h-[600px] flex items-center justify-center">
@@ -182,7 +195,7 @@ export default function ValentineProposal({
 
         <div className="flex items-center space-x-5 relative">
           <Button
-            className={`font-fredoka bg-[#d98f8f] hover:bg-[#a55c5c] text-white w-[70px] font-medium rounded-xl text-lg -ml-[95px] shadow-md`}
+            className={`font-fredoka bg-theme-btn hover:bg-theme-btn-hover text-white w-[70px] font-medium rounded-xl text-lg -ml-[95px] shadow-md`}
             onClick={handleYesClick}
           >
             Yes
@@ -240,7 +253,7 @@ export default function ValentineProposal({
                       font-poppins 
                       absolute top-full left-1 
                       transform -translate-x-1/2 mt-2 
-                      bg-[#efcdd0] text-pink-800 
+                      bg-theme-decline text-pink-800 
                       px-4 py-2 rounded-xl md:text-md text-sm
                       md:whitespace-nowrap
                       max-w-[200px] md:max-w-none
@@ -271,6 +284,7 @@ export default function ValentineProposal({
 
       <SuccessModal
         isOpen={showModal}
+        successImageURL={successImageURL}
         onClose={() => setShowModal(false)}
         message={message}
       />

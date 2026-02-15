@@ -2,6 +2,11 @@ import stamp1 from "../assets/stamp 1.png"
 import stamp2 from "../assets/stamp 2.png"
 import stamp3 from "../assets/stamp 3.png"
 
+import pinkTheme from "../assets/pink_theme.png"
+import purpleTheme from "../assets/purple_theme.png"
+import blueTheme from "../assets/blue_theme.png"
+// import greenTheme from "../assets/green_theme.png"
+
 export const declineMessages = [
   "are you sure?",
   "really sure?",
@@ -25,3 +30,33 @@ export const stamps = [
   { id: "stamp2", src: stamp2, alt: "Two cats with heart" },
   { id: "stamp3", src: stamp3, alt: "Penguin cats" },
 ]
+
+export const themes = [
+  { id: "pinkTheme", src: pinkTheme, alt: "pink theme" },
+  { id: "purpleTheme", src: purpleTheme, alt: "purple theme" },
+  { id: "blueTheme", src: blueTheme, alt: "blue theme" },
+]
+
+export const colourThemes = {
+  pinkTheme: {
+    cover: "#d98f8f",
+    text: "#cd7b7b",
+    btn: "#d98f8f",
+    btnHover: "#a55c5c",
+    decline: "#efcdd0",
+  },
+  purpleTheme: {
+    cover: "#a48fd9",
+    text: "#957bcd",
+    btn: "#a48fd9",
+    btnHover: "#755ca5",
+    decline: "#e2cdef",
+  },
+  blueTheme: {
+    cover: "#8fbcd9",
+    text: "#7ba3cd",
+    btn: "#8fbcd9",
+    btnHover: "#5c8aa5",
+    decline: "#cde4ef",
+  },
+}

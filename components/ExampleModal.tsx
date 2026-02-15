@@ -104,7 +104,9 @@ export default function ExampleModal({
                     valentineName={valentineData?.valentineName ?? ""}
                     senderName={valentineData?.senderName ?? ""}
                     message={valentineData?.message ?? ""}
+                    proposalMessage={valentineData?.proposalMessage ?? ""}
                     selectedStamp={valentineData?.selectedStamp ?? "stamp1"}
+                    selectedTheme={valentineData?.selectedTheme ?? "pinkTheme"}
                     showClickHeartEffect={false}
                   />
                 ) : (

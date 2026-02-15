@@ -12,6 +12,7 @@ interface StampOption {
 }
 
 interface StampSelectorProps {
+  formFieldName: string
   selectedStamp: string | null
   onStampSelect: (stampId: string) => void
   control: Control<any>
@@ -19,6 +20,7 @@ interface StampSelectorProps {
 }
 
 export function StampSelector({
+  formFieldName,
   selectedStamp,
   onStampSelect,
   control,
@@ -31,7 +33,7 @@ export function StampSelector({
       </h3>
       <FormField
         control={control}
-        name="selectedStamp"
+        name={formFieldName}
         render={({ field }) => (
           <FormItem>
             <FormControl>

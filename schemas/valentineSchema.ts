@@ -4,12 +4,15 @@ export const valentineFormSchema = z
   .object({
     senderName: z.string().min(1, "Your name is required"),
     recipientName: z.string().min(1, "Valentine's name is required"),
+    proposalMessage: z.string().min(1, "Proposal message is required"),
+    successImage: z.custom<File>().optional(),
     message: z.string().min(1, "Message is required"),
     image1: z.custom<File>().optional(),
     caption1: z.string().optional(),
     image2: z.custom<File>().optional(),
     caption2: z.string().optional(),
     selectedStamp: z.string().min(1, "Please select a stamp"),
+    selectedTheme: z.string().min(1, "Please select a theme"),
   })
   .refine(
     (data) => (data.image1 ? (data.caption1 ?? "").trim().length > 0 : true),
